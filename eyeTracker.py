@@ -16,10 +16,10 @@ from functools import partial
 
 import numpy as np
 from datetime import timedelta
-from pandas import *
+#from pandas import *
         
 from kivy.support import install_twisted_reactor
-from pandas.tools.merge import concat
+#from pandas.tools.merge import concat
 from pydoc import deque
 install_twisted_reactor() 
 
