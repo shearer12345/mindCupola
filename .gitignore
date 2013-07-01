@@ -1,6 +1,7 @@
 # eclipse workspace metadata #
 ##############################
 .metadata
+.pydevproject~
 
 # pdfs (made from rsts) #
 #########################
