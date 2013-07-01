@@ -1,0 +1,12 @@
+# eclipse workspace metadata #
+##############################
+.metadata
+
+# pdfs (made from rsts) #
+#########################
+*.pdf
+
+# compiled python files #
+#########################
+*.pyc
+

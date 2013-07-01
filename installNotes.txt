@@ -1,0 +1,129 @@
+----------
+EyeTracker
+----------
+
+MirametrixTracker
+-----------------
+
+#) goto http://mirametrix.com/support/ and click on download. The password for the page is: mirametrix051488e
+#) download the Tracker appropriate for your system (32bit or 64bit)
+#) run the installer
+
+--------------------
+MindCupolaController
+--------------------
+
+On a linux build, or a linux VM.
+
+VirtualMachine install notes
+----------------------------
+
+#) install virtualbox (https://www.virtualbox.org/wiki/Downloads)
+#) install virtualbox extension pack (https://www.virtualbox.org/wiki/Downloads)
+#) download latest xubuntu desktop (tested on xubuntu-12.10-desktop-amb64.iso) (http://xubuntu.org/getxubuntu)
+#) install xubuntu into virtual machine
+  #) VirtualBox Manager->Machine->New
+  #) :Name: MindCupolaController - xubuntu desktop 12.10 64-bit
+     :Type: Linux
+     :Version: Other Linux
+  #) :Memory Size: 512 MB
+  #) Create a virtual hard drive now
+  #) VDI (VirtualBox Disk Image)
+  #) Dynamically allocated
+  #) :Name: MindCupolaController - xubuntu desktop 12.10 64-bit
+     :Size: 8.00GB
+  #) VirtualBox Manager->Machine->Settings
+    #) Display
+      #) :Video Memory: 64MB
+         :Enable 3D Acceleration: Yes
+         :Enable 2D Video Acceleration: Yes
+    #) USB
+      #) :Enable USB controller: Yes
+         :Enable USB 2.0 (EHCI) Controller): Yes
+  #) VirtualBox Manager->Machine-Start
+    #) 'Do not show this message again', and 'Ok' for "auto capture keyboard" warning
+    #) Select xubuntu iso for start-up disk
+    #) Start
+    #) 'Do not show this message again', and 'Ok' for "virtual display is current set to 16 bit" warning
+    #) 'Do not show this message again', and 'Ok' for "mouse pointer integration" warning
+    #) wait
+    #) Install Xubuntu
+      #) :Download updates while installing: Yes
+         :Install this third-party software: No
+      #) Erase disk and install Xubuntu, Continue
+      #) :Where are you?: London, Continue
+      #) :Keyboard layout: English (UK), Continue
+      #) :Who are you:
+           :Your Name: MindCupolaController
+           :Your computer's name: mindcupolacontroller-VirtualBox
+           :Pick a username: mindcupolacontroller
+           :Choose a password: mindcupolacontroller
+           :Log in automatically: Yes
+           Continue
+      #) wait for "Copying files"
+      #) 
+
+
+
+
+post install
+  #) to remove boot error "piix4_smbus 0000.00.07.0: SMBus base address uninitialized - upgrade bios or use force_addr=0xaddr", follow instructions at http://fintastical.blogspot.co.uk/2010/11/virtualbox-piix4smbus-error.html
+
+VirtualMachine usage notes
+---------------------------
+
+* either install as above, or get pre-built VirtualBox Disk Image +
+
+
+Python depends
+--------------
+
+python:
+  windows:
+    from http://www.python.org/download/, download and install python 2.7 (32-bit or 64-bit, as appropriate)
+    add python to PATH
+
+setuptools:
+  windows:
+    from http://pypi.python.org/pypi/setuptools download setuptools0.6c11.win32-py2.7.exe
+    run the exe
+    add the easy_install.exe path (probably "C:\Python27\Scripts") to the PATH 
+
+twisted:
+  windows:
+    from http://www.lfd.uci.edu/~gohlke/pythonlibs/ download twisted and install 
+  ubuntu:
+    TODO
+
+zope.interface:
+  windows:
+    start a console with admin priviliges
+    easy_install zope.interface
+  ubuntu:
+    easy_install zope.interface
+
+txosc:
+  windows:
+    start a console with admin priviliges
+    easy_install txosc
+    #from http://pypi.python.org/pypi/txosc download txosc, unpack and "python setup.py install" it
+
+Auralizer
+~~~~~~~~~
+
+using puredata extended - pd-extended
+
+puredata install - http://puredata.info/docs/faq/debian
+
+that's it
+
+Test
+~~~~
+
+Tracker test:
+
+  ../tracker/tracker.exe
+
+MCC:
+  python MCC/mindCupolaController.py (TODO (subprocess) on windows will spawn tracker if possible).
+
