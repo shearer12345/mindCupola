@@ -20,6 +20,7 @@ VirtualMachine install notes
 
 #) install virtualbox (https://www.virtualbox.org/wiki/Downloads)
 #) install virtualbox extension pack (https://www.virtualbox.org/wiki/Downloads)
+#) plugin in the USB-serial adaptor and install drivers (if needed), look in Device Manager for which COM port it is on (probably COM4)
 #) download latest xubuntu desktop (tested on xubuntu-12.10-desktop-amb64.iso) (http://xubuntu.org/getxubuntu)
 #) install xubuntu into virtual machine
   #) VirtualBox Manager->Machine->New
@@ -37,6 +38,12 @@ VirtualMachine install notes
       #) :Video Memory: 64MB
          :Enable 3D Acceleration: Yes
          :Enable 2D Video Acceleration: Yes
+    #) Serial Ports (http://techtooltip.wordpress.com/2008/09/12/using-host-serial-port-from-guest-in-virtual-box/)
+      #) :Port 1:
+         :Enabled Serial Port: Yes
+         :Port Number: COM1 (this is how it will appear to the guest, and COM1 on a linux host will be /dev/tty0
+         :Port Mode: Host Device
+         :Port/File Path: COM4 (the actual location on HOST, probably COM4, you looked it up earlier)      
     #) USB
       #) :Enable USB controller: Yes
          :Enable USB 2.0 (EHCI) Controller): Yes
@@ -62,6 +69,21 @@ VirtualMachine install notes
            Continue
       #) wait for "Copying files"
 
+#) Test serial port
+  #) on xubuntu
+  #) sudo apt-get install gtkterm
+  #) add user to dialout group
+    #) sudo usermod -a -G dialout mindcupolacontroller
+    #) su - mindcupolacontroller (to relogin, and have the group access (will persist after logout/in)
+  #) start gtkterm
+  #) Configuration->Port
+    :Port: /dev/ttyS0
+    :Baud: 9600
+  #) Configuration->Local Echo = ON
+  #) Short pins 2&3 of the serial port (connecting TX&RX)
+  #) Type stuff into GtkTerm, you should see each character twice (the local echo, plus the physical echo (from the short))
+  #) TODO need to change the rights so non-sudo users can access
+  
 #) Install mindCupola dependencies
   #) sudo add-apt-repository ppa:kivy-team/kivy
   #) sudo apt-get update
@@ -69,12 +91,18 @@ VirtualMachine install notes
 
 #) Clone mindCupola
   #) echo '[http] sslverify = false' >> ~/.gitconfig
+  #) cd ~
   #) git clone https://github.com/shearer12345/mindCupola.git
   #) cd mindCupola
 
+#) Update mindCupola (can do again)
+  #) cd ~/mindCupola
+  #) git pull
+  
 #) Test mindCupola
+  #) cd ~/mindCupola
   #) python mindCupolaControllerSimple.py
-
+ 
 
 post install
   #) to remove boot error "piix4_smbus 0000.00.07.0: SMBus base address uninitialized - upgrade bios or use force_addr=0xaddr", follow instructions at http://fintastical.blogspot.co.uk/2010/11/virtualbox-piix4smbus-error.html
