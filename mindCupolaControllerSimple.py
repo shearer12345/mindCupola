@@ -16,7 +16,7 @@ Config.set('graphics', 'height', '700')
 from kivy import Logger
 from kivy.uix.settings import Settings
 from kivy.clock import Clock
-from mindCupolaPythonUtils import whoAmI, lineno, jsConfigParser
+from mindCupolaPythonUtils import whoAmI, lineno
 
 from kivy.core.audio import SoundLoader
 
@@ -33,8 +33,8 @@ from oscSender import OscSender
 
 class MindCupolaControllerSimple(EventDispatcher):
     
-    _configParser = jsConfigParser()
-    _settings = Settings()
+    #_configParser = jsConfigParser()
+    #_settings = Settings()
     
     def testCallback(self, instance, value):
         print 'My callback is call from', instance,
