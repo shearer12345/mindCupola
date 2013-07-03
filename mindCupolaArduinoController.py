@@ -9,7 +9,7 @@ import sys
 from types import NoneType
 
 from kivy.support import install_twisted_reactor
-from traits.tests.test_property_notifications import on_anyvalue_changed
+#from traits.tests.test_property_notifications import on_anyvalue_changed
 from kivy.uix.label import Label
 
 install_twisted_reactor() 
