@@ -82,20 +82,24 @@ python:
   windows:
     from http://www.python.org/download/, download and install python 2.7 (32-bit or 64-bit, as appropriate)
     add python to PATH
+  xubuntu:
+    pre-installed
 
 setuptools:
   windows:
     from http://pypi.python.org/pypi/setuptools download setuptools0.6c11.win32-py2.7.exe
     run the exe
     add the easy_install.exe path (probably "C:\Python27\Scripts") to the PATH 
+  xubuntu:
+    sudo apt-get install python-setuptools
 
 twisted:
   windows:
     from http://www.lfd.uci.edu/~gohlke/pythonlibs/ download twisted and install 
-  ubuntu:
+  xubuntu:
     TODO
 
-zope.interface:
+zope.interface - don't need?:
   windows:
     start a console with admin priviliges
     easy_install zope.interface
@@ -107,6 +111,8 @@ txosc:
     start a console with admin priviliges
     easy_install txosc
     #from http://pypi.python.org/pypi/txosc download txosc, unpack and "python setup.py install" it
+  xubuntu:
+    ?sudo easy_install txosc?
 
 Auralizer
 ~~~~~~~~~
