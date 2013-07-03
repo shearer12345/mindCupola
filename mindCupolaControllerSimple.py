@@ -4,6 +4,7 @@ Created on 19 Aug 2012
 @author: shearer
 '''
 import sys
+
 from types import NoneType
 
 from kivy.support import install_twisted_reactor
@@ -540,14 +541,17 @@ class MindCupolaControllerSimpleWidgetTestApp(App):
         
         #Clock.schedule_interval(self.connectEyeTracker, 1) #connect and keep reconnecting on loss
         return mindCupolaControllerSimpleWidget
+
     
         
 # self run, self test     
 if __name__ == "__main__":
+    from mindCupolaPythonUtils import get_default_gateway_linux
     Logger.info(__file__ + ': running from __name__')
-
-    host = '192.168.1.118'
-    host = '192.168.1.119'
+    
+    #TODO 5 add command line options, according to http://kivy.org/docs/api-kivy.config.html    
+    host = get_default_gateway_linux()
+    
     etHost = host
     etPort = 4242
     etGoodCalibrationThreshold=8
