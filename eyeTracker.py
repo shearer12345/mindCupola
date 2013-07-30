@@ -290,7 +290,10 @@ class EyeTrackerProtocol(LineReceiver):
                     et.calibrationActivePoint = 8
 #                print et.calibrationActivePoint
             elif attribDict['ID'] == 'CALIB_RESULT_PT':
-                pass #ignore, nothing intesting in 'CALIB_RESULT_PT'
+                pass
+#                for key, value in attribDict.items():
+#                    print 'CALIB_RESULT_PT: ' + key + ' ... ' + str(value)
+#                    pass #ignore, nothing intesting in 'CALIB_RESULT_PT'
             elif attribDict['ID'] == 'CALIB_RESULT':
                 et.calibrationActivePoint = -1
                 et.calibrationActiveFlag = False
@@ -298,14 +301,19 @@ class EyeTrackerProtocol(LineReceiver):
                 runningTotal = 0
                 for key, value in attribDict.items():
                     if key.startswith('LV') or key.startswith('RV'):
+#                        print key, str(value)
                         if value: runningTotal += 1
                 
                 #running Total will be in range [0,18] (left eye, right eye, for 9 calibration points
                 Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Calibration Complete. Calibration score = ' + str(runningTotal) + ' out of 18')
+                print 'got calibration result of ' + str(runningTotal),
+                #TODO 2 decrease goodCalibrationThreshold a little after each failure to increase chance of calibration
+                
                 if runningTotal > et.goodCalibrationThreshold: #good calibration threshold
                     et.goodCalibration = True
+                    print ' (GOOD)'
                 else:
-                    print 'got calibration result (BAD)'
+                    print ' (BAD)'
                     et.badCalibration = True
             else:
                 Logger.exception(self.__class__.__name__ + ': in [' + whoAmI() + '] got eyetracker calibration for unknown ID: ' + attribDict['ID'])
