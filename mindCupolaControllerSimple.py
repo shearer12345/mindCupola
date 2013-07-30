@@ -562,7 +562,7 @@ if __name__ == "__main__":
     mcar.manualMode = False
     
     mcvHost = host
-    mcv = MindCupolaVisualizerGavinController(host=mcvHost, verbose=True)
+    mcv = MindCupolaVisualizerGavinController(host=mcvHost, verbose=False)
     
     auralizerNamespace_prefix='mca'
     auralizerHost=host
