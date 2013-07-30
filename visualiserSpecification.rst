@@ -358,6 +358,13 @@ Fear
 
     :f: multiplier on the fear factor (of predators by boids) - tendency to move away from predators
 
+MigrateShape
+####
+
+    ``/mcv/flock/migrateShapeNumber i``
+
+    :i: migrateShape selector. 0=> no migrate to shape (i.e. normal eye following mode), others will attempt to use a shape in the boids run directory called shapeXX, where XX is the number
+
 Override Boid Population Size
 #############################
 

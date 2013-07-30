@@ -200,7 +200,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         #TODO ADAM x10 sound effect when matrix effect is triggered (freezes the particle system and rotate) - message = "/mca/specialEffectTriggered matrixEffect"
             # nice, I like it.
         
-        #TODO DONE ADAM x11 sound effect when boids are following one of the 6 shapes - message = "/mca/specialEffectTriggered boidsFormingShape"
+        #TODO DONE ADAM x11 sound effect when boids are following one of the 6 shapes - message = "/mca/specialEffectTriggeredormingShape"
             # yes, nice.
             
         #TODO DONE ADAM x12 sound effect when blur effect triggered - message = "/mca/specialEffectTriggered blurLookAtLocation"
@@ -550,7 +550,7 @@ if __name__ == "__main__":
     Logger.info(__file__ + ': running from __name__')
     
     #TODO 5 add command line options, according to http://kivy.org/docs/api-kivy.config.html    
-    host = get_default_gateway_linux()
+    host = '192.168.1.119'#get_default_gateway_linux()
     
     etHost = host
     etPort = 4242
@@ -562,7 +562,7 @@ if __name__ == "__main__":
     mcar.manualMode = False
     
     mcvHost = host
-    mcv = MindCupolaVisualizerGavinController(host=mcvHost, verbose=False)
+    mcv = MindCupolaVisualizerGavinController(host=mcvHost, verbose=True)
     
     auralizerNamespace_prefix='mca'
     auralizerHost=host

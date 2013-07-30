@@ -115,7 +115,42 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.oscSender.send('pupilsVisible', int(value))
         #Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ' Line: ' + str(lineno()) + ']') 
         #print 'send OSC pupilVisible: ' + str(value)
-        
+    
+    migrateShapeDict = {        0: 'none',
+                        1: 'planeTop',
+                        2: 'planeSide',
+                        3: 'hand',
+                        4: 'fishStripes',
+                        5: 'arrowLeft',
+                        6: 'fishLeft',
+                        7: 'fishLeftWithTails',
+                        8: 'faceHappy',
+                        9: 'faceSad',
+                        10:'fishUp',
+                        11:'circle',
+                        12:'gunRight1',
+                        13:'lightbulb',
+                        14:'gunRight2',
+                        15:'buddah',
+                        16:'star',
+                        17:'radioactive',
+                        18:'ampersand',
+                        19:'x',
+                        20:'fishBones',
+                        21:'squid',
+                        22:'hourGlass',
+                        23:'hexagons',
+                        24:'cloud',
+                        25:'wineGlass',
+                        26:'shhh',
+                        }
+    
+    migrateShapeNumber = NumericProperty(-1)
+    def on_migrateShapeNumber(self, instance, value):
+        assert type(value) in [int, float]
+        self.oscSender.send('flock/migrateShapeNumber', int(value))
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ' Line: ' + str(lineno()) + ']' + ' migrateShapeNumber changed to ' + str(int(value)))
+    
     specialEffectList = ['none', 'matrixEffect', 'blurLookAtLocation', 'boidsFormingShape'] 
     specialEffect = StringProperty(specialEffectList[0])
     def on_specialEffect(self, instance, value):
@@ -248,6 +283,155 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         self.mindCupolaVisualizerGavinController.bind(eyeRightVisible=eyeRightVisible_widget.setter('active'))
         eyeVisibleBox.add_widget(eyeRightVisible_widget)
         
+        #migrateShapeNumber
+        
+        migrateShapeNumberBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,4])
+        mainBox.add_widget(migrateShapeNumberBox)
+        migrateShapeNumberBox1 = BoxLayoutOrientationRelativeToParent()
+        migrateShapeNumberBox.add_widget(migrateShapeNumberBox1)
+        migrateShapeNumberBox2 = BoxLayoutOrientationRelativeToParent()
+        migrateShapeNumberBox.add_widget(migrateShapeNumberBox2)
+                                                                  
+        migrateShapeNumber_widget = LabeledSlider(labelingString='migrateShapeNumber', value=self.mindCupolaVisualizerGavinController.migrateShapeNumber, min=0, max=len(self.mindCupolaVisualizerGavinController.migrateShapeDict))
+        migrateShapeNumber_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('migrateShapeNumber'))
+        self.mindCupolaVisualizerGavinController.bind(migrateShapeNumber=migrateShapeNumber_widget.setter('value'))
+        migrateShapeNumberBox1.add_widget(migrateShapeNumber_widget)
+        
+        #shhh
+        self.migrateShapeNumberTo26_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[26], active=False)
+        self.migrateShapeNumberTo26_widget.bind(active=self.migrateShapeNumberTo26)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo26_widget)
+        
+        #wineGlass
+        self.migrateShapeNumberTo25_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[25], active=False)
+        self.migrateShapeNumberTo25_widget.bind(active=self.migrateShapeNumberTo25)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo25_widget)
+        
+        #cloud
+        self.migrateShapeNumberTo24_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[24], active=False)
+        self.migrateShapeNumberTo24_widget.bind(active=self.migrateShapeNumberTo24)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo24_widget)
+        
+        #hexagons
+        self.migrateShapeNumberTo23_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[23], active=False)
+        self.migrateShapeNumberTo23_widget.bind(active=self.migrateShapeNumberTo23)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo23_widget)
+        
+        #hourGlass
+        self.migrateShapeNumberTo22_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[22], active=False)
+        self.migrateShapeNumberTo22_widget.bind(active=self.migrateShapeNumberTo22)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo22_widget)
+        
+        #squid
+        self.migrateShapeNumberTo21_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[21], active=False)
+        self.migrateShapeNumberTo21_widget.bind(active=self.migrateShapeNumberTo21)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo21_widget)
+        
+        #fishBones
+        self.migrateShapeNumberTo20_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[20], active=False)
+        self.migrateShapeNumberTo20_widget.bind(active=self.migrateShapeNumberTo20)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo20_widget)
+        
+        #x
+        self.migrateShapeNumberTo19_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[19], active=False)
+        self.migrateShapeNumberTo19_widget.bind(active=self.migrateShapeNumberTo19)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo19_widget)
+        
+        #ampersand
+        self.migrateShapeNumberTo18_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[18], active=False)
+        self.migrateShapeNumberTo18_widget.bind(active=self.migrateShapeNumberTo18)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo18_widget)
+        
+        #radioactive
+        self.migrateShapeNumberTo17_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[17], active=False)
+        self.migrateShapeNumberTo17_widget.bind(active=self.migrateShapeNumberTo17)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo17_widget)
+        
+        #star
+        self.migrateShapeNumberTo16_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[16], active=False)
+        self.migrateShapeNumberTo16_widget.bind(active=self.migrateShapeNumberTo16)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo16_widget)
+        
+        #buddah
+        self.migrateShapeNumberTo15_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[15], active=False)
+        self.migrateShapeNumberTo15_widget.bind(active=self.migrateShapeNumberTo15)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo15_widget)
+        
+        #gunRight2
+        self.migrateShapeNumberTo14_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[14], active=False)
+        self.migrateShapeNumberTo14_widget.bind(active=self.migrateShapeNumberTo14)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo14_widget)
+        
+        #lightbulb
+        self.migrateShapeNumberTo13_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[13], active=False)
+        self.migrateShapeNumberTo13_widget.bind(active=self.migrateShapeNumberTo13)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo13_widget)
+        
+        #gunRight1
+        self.migrateShapeNumberTo12_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[12], active=False)
+        self.migrateShapeNumberTo12_widget.bind(active=self.migrateShapeNumberTo12)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo12_widget)
+        
+        #circle
+        self.migrateShapeNumberTo11_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[11], active=False)
+        self.migrateShapeNumberTo11_widget.bind(active=self.migrateShapeNumberTo11)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo11_widget)
+        
+        #fishUp
+        self.migrateShapeNumberTo10_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[10], active=False)
+        self.migrateShapeNumberTo10_widget.bind(active=self.migrateShapeNumberTo10)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo10_widget)
+        
+        #faceSad
+        self.migrateShapeNumberTo9_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[9], active=False)
+        self.migrateShapeNumberTo9_widget.bind(active=self.migrateShapeNumberTo9)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo9_widget)
+        
+        #faceHappy
+        self.migrateShapeNumberTo8_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[8], active=False)
+        self.migrateShapeNumberTo8_widget.bind(active=self.migrateShapeNumberTo8)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo8_widget)
+        
+        #fishLeftWithTails
+        self.migrateShapeNumberTo7_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[7], active=False)
+        self.migrateShapeNumberTo7_widget.bind(active=self.migrateShapeNumberTo7)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo7_widget)
+        
+        #fishLeft
+        self.migrateShapeNumberTo6_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[6], active=False)
+        self.migrateShapeNumberTo6_widget.bind(active=self.migrateShapeNumberTo6)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo6_widget)
+        
+        #arrowLeft
+        self.migrateShapeNumberTo5_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[5], active=False)
+        self.migrateShapeNumberTo5_widget.bind(active=self.migrateShapeNumberTo5)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo5_widget)
+        
+        #fishStripes
+        self.migrateShapeNumberTo4_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[4], active=False)
+        self.migrateShapeNumberTo4_widget.bind(active=self.migrateShapeNumberTo4)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo4_widget)
+        
+        #hand
+        self.migrateShapeNumberTo3_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[3], active=False)
+        self.migrateShapeNumberTo3_widget.bind(active=self.migrateShapeNumberTo3)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo3_widget)
+        
+        #planeSide
+        self.migrateShapeNumberTo2_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[2], active=False)
+        self.migrateShapeNumberTo2_widget.bind(active=self.migrateShapeNumberTo2)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo2_widget)
+        
+        #planeTop
+        self.migrateShapeNumberTo1_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[1], active=False)
+        self.migrateShapeNumberTo1_widget.bind(active=self.migrateShapeNumberTo1)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo1_widget)
+        
+        self.migrateShapeNumberTo0_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[0], active=False)
+        self.migrateShapeNumberTo0_widget.bind(active=self.migrateShapeNumberTo0)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo0_widget)
+        
+        ##
         boidBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,2])
         mainBox.add_widget(boidBox)
         boidBox1 = BoxLayoutOrientationRelativeToParent()
@@ -283,6 +467,7 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         self.predatorCountToOne_widget = LabeledSwitch(labelingString='set predatorCountToOne', active=False)
         self.predatorCountToOne_widget.bind(active=self.predatorCountToOne)
         mainBox.add_widget(self.predatorCountToOne_widget)
+        
         
         stateBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,2])
         mainBox.add_widget(stateBox)
@@ -382,7 +567,7 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         if value:
             self.mindCupolaVisualizerGavinController.boidType = 3
             self.boidTypeWidgetsToInactive()
-     
+            
     def stateWidgetsToInactive(self):
         self.stateTo1_widget.active = False
         self.stateTo2_widget.active = False
@@ -409,12 +594,177 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         if value:
             self.mindCupolaVisualizerGavinController.state = 4
             self.stateWidgetsToInactive()
-
+            
     def stateTo5(self, instance, value):
         if value:
             self.mindCupolaVisualizerGavinController.state = 5
             self.stateWidgetsToInactive()
             
+    def migrateShapeNumberWidgetsToInactive(self):
+        self.migrateShapeNumberTo0_widget.active = False
+        self.migrateShapeNumberTo1_widget.active = False
+        self.migrateShapeNumberTo2_widget.active = False
+        self.migrateShapeNumberTo3_widget.active = False
+        self.migrateShapeNumberTo4_widget.active = False
+        self.migrateShapeNumberTo5_widget.active = False
+        self.migrateShapeNumberTo6_widget.active = False
+        self.migrateShapeNumberTo7_widget.active = False
+        self.migrateShapeNumberTo8_widget.active = False
+        self.migrateShapeNumberTo9_widget.active = False
+        self.migrateShapeNumberTo10_widget.active = False
+        self.migrateShapeNumberTo11_widget.active = False
+        self.migrateShapeNumberTo12_widget.active = False
+        self.migrateShapeNumberTo13_widget.active = False
+        self.migrateShapeNumberTo14_widget.active = False
+        self.migrateShapeNumberTo15_widget.active = False
+        self.migrateShapeNumberTo16_widget.active = False
+        self.migrateShapeNumberTo17_widget.active = False
+        self.migrateShapeNumberTo18_widget.active = False
+        self.migrateShapeNumberTo19_widget.active = False
+        self.migrateShapeNumberTo20_widget.active = False
+        self.migrateShapeNumberTo21_widget.active = False
+        self.migrateShapeNumberTo22_widget.active = False
+        self.migrateShapeNumberTo23_widget.active = False
+        self.migrateShapeNumberTo24_widget.active = False
+        self.migrateShapeNumberTo25_widget.active = False
+        self.migrateShapeNumberTo26_widget.active = False
+        
+    def migrateShapeNumberTo0(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 0
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo1(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 1
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo2(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 2
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo3(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 3
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo4(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 4
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo5(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 5
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo6(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 6
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo7(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 7
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo8(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 8
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo9(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 9
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo10(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 10
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo11(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 11
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo12(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 12
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo13(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 13
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo14(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 14
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo15(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 15
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo16(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 16
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo17(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 17
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo18(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 18
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo19(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 19
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo20(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 20
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo21(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 21
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo22(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 22
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo23(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 23
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo24(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 24
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo25(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 25
+            self.migrateShapeNumberWidgetsToInactive()
+            
+    def migrateShapeNumberTo26(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.migrateShapeNumber = 26
+            self.migrateShapeNumberWidgetsToInactive()
+            
+           
 #        eyeCalibrationPositionX_widget = LabeledSlider(labelingString='eyeCalibrationPositionX', value=self.mindCupolaVisualizerGavinController.eyeCalibrationPositionX, min=0, max=1)
 #        eyeCalibrationPositionX_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('eyeCalibrationPositionX'))
 #        self.mindCupolaVisualizerGavinController.bind(eyeCalibrationPositionX=eyeCalibrationPositionX_widget.setter('value'))
