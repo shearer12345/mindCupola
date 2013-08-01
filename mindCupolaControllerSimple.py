@@ -95,14 +95,15 @@ class MindCupolaControllerSimple(EventDispatcher):
         #TODO ADAM 4 sound effect for entering state "running" - "/mca/interactionState running"
             #in progress by adam
         
+        #TODO 1 visualiser aspect ratio to 16:9- 
         
-        #TODO 0 visualiser aspect ratio to 16:9- 
-        
-        #TODO 0 message and sound effect for when enter running state - 
+        #TODO 1.1 message and sound effect for when enter running state - 
 
         #TODO 1 when/how should boidType be controlled/changed
         #random initially?? perhaps the AD model influences the chances of moving
         
+        
+                
         '''
             boidType includes:
                 birds
@@ -126,7 +127,7 @@ class MindCupolaControllerSimple(EventDispatcher):
                 #reflecting managing to maintain a steady state. maybe trigger time increases over time
                 
             #c. they build up on of the 6 shapes, a shape for each boid type.
-                #TODO 0 Brigitta - setup mapping from boidType to shape
+                #TODO 1 Brigitta - setup mapping from boidType to shape
                 #triggered by a random timer, reset on entry to state
                 #reflecting managing to maintain a steady state. maybe trigger time increases over time
                  
@@ -345,6 +346,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         #Mode 1 - ambient
         if self.mindCupolaVisualizerGavinController.state == 1:
             self.eyeTracker.goodCalibration = False
+            self.eyeTracker.goodCalibrationThresholdReset()  #TODO DONE 0 reset present calibration threshold on exit
             self.eyeTracker.badCalibration = False
             self.eyeTracker.calibrationActiveFlag = False
             self.eyeTracker.goodEyes = False
@@ -364,6 +366,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         #Mode 2 - entering
         elif self.mindCupolaVisualizerGavinController.state == 2:
             self.eyeTracker.goodCalibration = False
+            self.eyeTracker.goodCalibrationThresholdReset()  #TODO DONE 0 reset present calibration threshold on exit
             self.eyeTracker.badCalibration = False
             self.eyeTracker.calibrationActiveFlag = False
             self.eyeTracker.goodEyes = False
@@ -445,8 +448,8 @@ class MindCupolaControllerSimple(EventDispatcher):
             Logger.warning(self.__class__.__name__ + ': in [' + whoAmI() + '] State is ' + str(self.mindCupolaVisualizerGavinController.state))
     
     def retargetBoids(self, dt=None):
-        #TODO 1 drive the attractor points around to give random motion
-        print 'in targetBoids'
+        #TODO 1.1 drive the attractor points around to give random motion
+        Logger.warning(self.__class__.__name__ + ': in [' + whoAmI() + '] Self targetting boids NOT implemented yet')
     
 #UIX        
 from kivy.uix.boxlayout import BoxLayout
@@ -554,8 +557,8 @@ if __name__ == "__main__":
     
     etHost = host
     etPort = 4242
-    etGoodCalibrationThreshold=8
-    et = EyeTracker(host=etHost, port=etPort, goodCalibrationThreshold=etGoodCalibrationThreshold)
+    etGoodCalibrationThresholdMax=8
+    et = EyeTracker(host=etHost, port=etPort, goodCalibrationThresholdMax=etGoodCalibrationThresholdMax)
     et.wantToBeConnectedFlag = True
     
     mcar = MindCupolaArduinoController()

@@ -204,7 +204,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.oscSender.send('flock/cruisingSpeed', float(value) )    
     
     maxVelocityMin = 0.5
-    maxVelocity = BoundedNumericProperty(60.0, min=maxVelocityMin, max=200.0) #TODO 00 default
+    maxVelocity = BoundedNumericProperty(60.0, min=maxVelocityMin, max=200.0)
     def on_maxVelocity(self, instance, value):
         assert type(value) in [int, float]
         value = max(self.maxVelocityMin, value)
