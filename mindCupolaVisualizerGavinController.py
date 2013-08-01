@@ -60,6 +60,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.property('velocityRate').dispatch(self)
         self.property('migrateRate').dispatch(self)
         self.property('migrateOrbit').dispatch(self)
+        self.property('blur').dispatch(self)
         
         
         
@@ -78,6 +79,12 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
     def on_debug(self, instance, value):
         assert type(value) in [bool]
         self.oscSender.send('debug', int(value) )
+        
+    blur = BoundedNumericProperty(0.0, min=0.0, max=1.0) #BUG BoundedNumericProperty appear to case min and max to INTS
+    def on_blur(self, instance, value):
+        assert type(value) in [int, float]
+        self.oscSender.send('blur', float(value) )
+        
     ##attractor
     attractorPositionX = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
     attractorPositionY = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
@@ -275,6 +282,18 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         debug_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('debug'))
         self.mindCupolaVisualizerGavinController.bind(debug=debug_widget.setter('active'))
         leftBox.add_widget(debug_widget)
+        
+        blur_widget = LabeledSlider(labelingString='blur',
+                                                value=self.mindCupolaVisualizerGavinController.blur,
+                                                min=self.mindCupolaVisualizerGavinController.property('blur').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('blur').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        blur_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('blur'))
+        self.mindCupolaVisualizerGavinController.bind(blur=blur_widget.setter('value'))
+        leftBox.add_widget(blur_widget)
+
+        
         
         specialEffect_widget = LabeledLabel(labelingString='specialEffect', labelString=self.mindCupolaVisualizerGavinController.specialEffect)
         specialEffect_widget.bind(labelString=self.mindCupolaVisualizerGavinController.setter('specialEffect'))

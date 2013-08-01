@@ -109,6 +109,10 @@ There are a variety of incoming OSC messages that mcv should handle, detail as f
 
   :i: whether the visualisation should dump debug information. 0=No, 1=Yes
     
+``/mcv/blur f``
+
+  :f: how blurred the scene should be. in range(0:1)
+    
 ``/mcv/boidType i``
 
   :i: the boidType to use in the visualisation. Controls both their behaviour and look.
