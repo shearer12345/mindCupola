@@ -256,32 +256,31 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivyUtils import LabeledSwitch, LabeledSlider, LabeledLabel, LabeledCheckBox, BoxLayoutOrientationRelativeToParent
 
-class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToParent):
+class MindCupolaVisualizerGavinControllerMainWidget(BoxLayoutOrientationRelativeToParent):
 
     def __init__(self, mindCupolaVisualizerGavinController=None, **kwargs):
-        super(MindCupolaVisualizerGavinControllerWidget, self).__init__(**kwargs)
+        super(MindCupolaVisualizerGavinControllerMainWidget, self).__init__(**kwargs)
         self.mindCupolaVisualizerGavinController = MindCupolaVisualizerGavinController() if mindCupolaVisualizerGavinController is None else mindCupolaVisualizerGavinController
         assert isinstance(self.mindCupolaVisualizerGavinController, MindCupolaVisualizerGavinController)
         
-        leftBox = BoxLayoutOrientationRelativeToParent()
-        rightBox = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=True,)
-        self.add_widget(leftBox)
-        self.add_widget(rightBox)
+        box = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=True)
+        self.add_widget(box)
         
+
         fullscreen_widget = LabeledSwitch(labelingString='xx Fullscreen xx', active=self.mindCupolaVisualizerGavinController.fullscreen)
         fullscreen_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('fullscreen'))
         self.mindCupolaVisualizerGavinController.bind(fullscreen=fullscreen_widget.setter('active'))
-        leftBox.add_widget(fullscreen_widget)
+        box.add_widget(fullscreen_widget)
         
         paused_widget = LabeledSwitch(labelingString='Paused', active=self.mindCupolaVisualizerGavinController.paused)
         paused_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('paused'))
         self.mindCupolaVisualizerGavinController.bind(paused=paused_widget.setter('active'))
-        leftBox.add_widget(paused_widget)
+        box.add_widget(paused_widget)
         
         debug_widget = LabeledSwitch(labelingString='Debug', active=self.mindCupolaVisualizerGavinController.debug)
         debug_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('debug'))
         self.mindCupolaVisualizerGavinController.bind(debug=debug_widget.setter('active'))
-        leftBox.add_widget(debug_widget)
+        box.add_widget(debug_widget)
         
         blur_widget = LabeledSlider(labelingString='blur',
                                                 value=self.mindCupolaVisualizerGavinController.blur,
@@ -291,17 +290,17 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
                                                 )
         blur_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('blur'))
         self.mindCupolaVisualizerGavinController.bind(blur=blur_widget.setter('value'))
-        leftBox.add_widget(blur_widget)
+        box.add_widget(blur_widget)
 
         
         
         specialEffect_widget = LabeledLabel(labelingString='specialEffect', labelString=self.mindCupolaVisualizerGavinController.specialEffect)
         specialEffect_widget.bind(labelString=self.mindCupolaVisualizerGavinController.setter('specialEffect'))
         self.mindCupolaVisualizerGavinController.bind(specialEffect=specialEffect_widget.setter('labelString'))
-        leftBox.add_widget(specialEffect_widget)
+        box.add_widget(specialEffect_widget)
         
         specialEffectBox = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=False, size_hint_y=2)
-        leftBox.add_widget(specialEffectBox)
+        box.add_widget(specialEffectBox)
         
         self.specialEffectToNone_widget = LabeledSwitch(labelingString='specialEffectToNone', active=False)
         self.specialEffectToNone_widget.bind(active=self.specialEffectToNone)
@@ -323,7 +322,7 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
        
         
         attractorBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,4])
-        leftBox.add_widget(attractorBox)
+        box.add_widget(attractorBox)
         
         attractorPositionX_widget = LabeledSlider(labelingString='attractorPositionX', value=self.mindCupolaVisualizerGavinController.attractorPositionX, min=-1.0, max=1.0, orientationInvertedFromParent=False)
         attractorPositionX_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('attractorPositionX')),
@@ -336,7 +335,7 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         attractorBox.add_widget(attractorPositionY_widget)
         
         eyeVisibleBox = BoxLayoutOrientationRelativeToParent()
-        leftBox.add_widget(eyeVisibleBox)
+        box.add_widget(eyeVisibleBox)
         
         eyeLeftVisible_widget = LabeledCheckBox(labelingString='eyeLeftVisible', active=self.mindCupolaVisualizerGavinController.eyeLeftVisible)
         eyeLeftVisible_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('eyeLeftVisible'))
@@ -348,10 +347,16 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         self.mindCupolaVisualizerGavinController.bind(eyeRightVisible=eyeRightVisible_widget.setter('active'))
         eyeVisibleBox.add_widget(eyeRightVisible_widget)
         
+        self.pupilsVisible_widget = LabeledSwitch(labelingString='pupilsVisible', active=mindCupolaVisualizerGavinController.pupilsVisible)
+        self.pupilsVisible_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('pupilsVisible'))
+        self.mindCupolaVisualizerGavinController.bind(pupilsVisible=self.pupilsVisible_widget.setter('active'))
+        eyeVisibleBox.add_widget(self.pupilsVisible_widget)
+        
+        
         #migrateShapeNumber
         
         migrateShapeNumberBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,4])
-        leftBox.add_widget(migrateShapeNumberBox)
+        box.add_widget(migrateShapeNumberBox)
         migrateShapeNumberBox1 = BoxLayoutOrientationRelativeToParent()
         migrateShapeNumberBox.add_widget(migrateShapeNumberBox1)
         migrateShapeNumberBox2 = BoxLayoutOrientationRelativeToParent()
@@ -498,7 +503,7 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         
         ##
         boidBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,2])
-        leftBox.add_widget(boidBox)
+        box.add_widget(boidBox)
         boidBox1 = BoxLayoutOrientationRelativeToParent()
         boidBox.add_widget(boidBox1)
         boidBox2 = BoxLayoutOrientationRelativeToParent()
@@ -527,15 +532,15 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         
         self.predatorCountToZero_widget = LabeledSwitch(labelingString='set predatorCountToZero', active=False)
         self.predatorCountToZero_widget.bind(active=self.predatorCountToZero)
-        leftBox.add_widget(self.predatorCountToZero_widget)
+        box.add_widget(self.predatorCountToZero_widget)
         
         self.predatorCountToOne_widget = LabeledSwitch(labelingString='set predatorCountToOne', active=False)
         self.predatorCountToOne_widget.bind(active=self.predatorCountToOne)
-        leftBox.add_widget(self.predatorCountToOne_widget)
+        box.add_widget(self.predatorCountToOne_widget)
         
         
         stateBox = BoxLayoutOrientationRelativeToParent(size_hint=[1,2])
-        leftBox.add_widget(stateBox)
+        box.add_widget(stateBox)
         stateBox1 = BoxLayoutOrientationRelativeToParent()
         stateBox.add_widget(stateBox1)
         stateBox2 = BoxLayoutOrientationRelativeToParent()
@@ -569,88 +574,8 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         calibrationTarget_widget = LabeledSlider(labelingString='calibrationTarget', value=self.mindCupolaVisualizerGavinController.calibrationTarget, min=0, max=8)
         calibrationTarget_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('calibrationTarget'))
         self.mindCupolaVisualizerGavinController.bind(calibrationTarget=calibrationTarget_widget.setter('value'))
-        leftBox.add_widget(calibrationTarget_widget)
+        box.add_widget(calibrationTarget_widget)
         
-        cohesiveDistance_widget = LabeledSlider(labelingString='cohesiveDistance',
-                                                value=self.mindCupolaVisualizerGavinController.cohesiveDistance,
-                                                min=self.mindCupolaVisualizerGavinController.property('cohesiveDistance').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('cohesiveDistance').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        cohesiveDistance_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('cohesiveDistance'))
-        self.mindCupolaVisualizerGavinController.bind(cohesiveDistance=cohesiveDistance_widget.setter('value'))
-        rightBox.add_widget(cohesiveDistance_widget)
-
-        cruisingSpeed_widget = LabeledSlider(labelingString='cruisingSpeed',
-                                                value=self.mindCupolaVisualizerGavinController.cruisingSpeed,
-                                                min=self.mindCupolaVisualizerGavinController.property('cruisingSpeed').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('cruisingSpeed').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        cruisingSpeed_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('cruisingSpeed'))
-        self.mindCupolaVisualizerGavinController.bind(cruisingSpeed=cruisingSpeed_widget.setter('value'))
-        rightBox.add_widget(cruisingSpeed_widget)
-
-        maxVelocity_widget = LabeledSlider(labelingString='maxVelocity',
-                                                value=self.mindCupolaVisualizerGavinController.maxVelocity,
-                                                min=self.mindCupolaVisualizerGavinController.property('maxVelocity').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('maxVelocity').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        maxVelocity_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('maxVelocity'))
-        self.mindCupolaVisualizerGavinController.bind(maxVelocity=maxVelocity_widget.setter('value'))
-        rightBox.add_widget(maxVelocity_widget)
-        
-        attractionRate_widget = LabeledSlider(labelingString='attractionRate',
-                                                value=self.mindCupolaVisualizerGavinController.attractionRate,
-                                                min=self.mindCupolaVisualizerGavinController.property('attractionRate').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('attractionRate').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        attractionRate_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('attractionRate'))
-        self.mindCupolaVisualizerGavinController.bind(attractionRate=attractionRate_widget.setter('value'))
-        rightBox.add_widget(attractionRate_widget)
-        
-        velocityRate_widget = LabeledSlider(labelingString='velocityRate',
-                                                value=self.mindCupolaVisualizerGavinController.velocityRate,
-                                                min=self.mindCupolaVisualizerGavinController.property('velocityRate').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('velocityRate').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        velocityRate_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('velocityRate'))
-        self.mindCupolaVisualizerGavinController.bind(velocityRate=velocityRate_widget.setter('value'))
-        rightBox.add_widget(velocityRate_widget)
-        
-        migrateRate_widget = LabeledSlider(labelingString='migrateRate',
-                                                value=self.mindCupolaVisualizerGavinController.migrateRate,
-                                                min=self.mindCupolaVisualizerGavinController.property('migrateRate').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('migrateRate').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        migrateRate_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('migrateRate'))
-        self.mindCupolaVisualizerGavinController.bind(migrateRate=migrateRate_widget.setter('value'))
-        rightBox.add_widget(migrateRate_widget)
-        
-        migrateOrbit_widget = LabeledSlider(labelingString='migrateOrbit',
-                                                value=self.mindCupolaVisualizerGavinController.migrateOrbit,
-                                                min=self.mindCupolaVisualizerGavinController.property('migrateOrbit').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('migrateOrbit').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        migrateOrbit_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('migrateOrbit'))
-        self.mindCupolaVisualizerGavinController.bind(migrateOrbit=migrateOrbit_widget.setter('value'))
-        rightBox.add_widget(migrateOrbit_widget)
-        
-        localMigrateOrbit_widget = LabeledSlider(labelingString='localMigrateOrbit',
-                                                value=self.mindCupolaVisualizerGavinController.localMigrateOrbit,
-                                                min=self.mindCupolaVisualizerGavinController.property('localMigrateOrbit').get_min(self.mindCupolaVisualizerGavinController),
-                                                max=self.mindCupolaVisualizerGavinController.property('localMigrateOrbit').get_max(self.mindCupolaVisualizerGavinController),
-                                                orientationInvertedFromParent=False,
-                                                )
-        localMigrateOrbit_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('localMigrateOrbit'))
-        self.mindCupolaVisualizerGavinController.bind(localMigrateOrbit=localMigrateOrbit_widget.setter('value'))
-        rightBox.add_widget(localMigrateOrbit_widget)
-
     def specialEffectWidgetsToInactive(self):
         self.specialEffectToNone_widget.active = False
         self.specialEffectToMatrixEffect_widget.active = False
@@ -668,83 +593,14 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         
     def specialEffectToMatrixEffect(self, instance, value):
         self.specialEffectToValue('matrixEffect')
-        
+    
     def specialEffectToBlurLookAtLocation(self, instance, value):
         self.specialEffectToValue('blurLookAtLocation')
 
     def specialEffectToBoidsFormingShape(self, instance, value):
         self.specialEffectToValue('boidsFormingShape')
         
-        
-    def predatorCountToZero(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.predatorCount = 0
-            self.predatorCountToOne_widget.active = False
-            
-    def predatorCountToOne(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.predatorCount = 1
-            self.predatorCountToZero_widget.active = False
-    
-    def boidTypeWidgetsToInactive(self):
-        self.boidTypeTo0_widget.active = False
-        self.boidTypeTo1_widget.active = False
-        self.boidTypeTo2_widget.active = False
-        self.boidTypeTo3_widget.active = False
-        
-           
-    def boidTo0(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.boidType = 0
-            self.boidTypeWidgetsToInactive()
-            
-    def boidTo1(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.boidType = 1
-            self.boidTypeWidgetsToInactive()
-            
-    def boidTo2(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.boidType = 2
-            self.boidTypeWidgetsToInactive()
-            
-    def boidTo3(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.boidType = 3
-            self.boidTypeWidgetsToInactive()
-            
-    def stateWidgetsToInactive(self):
-        self.stateTo1_widget.active = False
-        self.stateTo2_widget.active = False
-        self.stateTo3_widget.active = False
-        self.stateTo4_widget.active = False
-        self.stateTo5_widget.active = False
-                 
-    def stateTo1(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.state = 1
-            self.stateWidgetsToInactive()
-            
-    def stateTo2(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.state = 2
-            self.stateWidgetsToInactive()
-            
-    def stateTo3(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.state = 3
-            self.stateWidgetsToInactive()
-            
-    def stateTo4(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.state = 4
-            self.stateWidgetsToInactive()
-            
-    def stateTo5(self, instance, value):
-        if value:
-            self.mindCupolaVisualizerGavinController.state = 5
-            self.stateWidgetsToInactive()
-            
+                
     def migrateShapeNumberWidgetsToInactive(self):
         self.migrateShapeNumberTo0_widget.active = False
         self.migrateShapeNumberTo1_widget.active = False
@@ -908,7 +764,171 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         if value:
             self.mindCupolaVisualizerGavinController.migrateShapeNumber = 26
             self.migrateShapeNumberWidgetsToInactive()
+
+    def boidTypeWidgetsToInactive(self):
+        self.boidTypeTo0_widget.active = False
+        self.boidTypeTo1_widget.active = False
+        self.boidTypeTo2_widget.active = False
+        self.boidTypeTo3_widget.active = False
+        
+           
+    def boidTo0(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.boidType = 0
+            self.boidTypeWidgetsToInactive()
             
+    def boidTo1(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.boidType = 1
+            self.boidTypeWidgetsToInactive()
+            
+    def boidTo2(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.boidType = 2
+            self.boidTypeWidgetsToInactive()
+            
+    def boidTo3(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.boidType = 3
+            self.boidTypeWidgetsToInactive()
+
+    def predatorCountToZero(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.predatorCount = 0
+            self.predatorCountToOne_widget.active = False
+            
+    def predatorCountToOne(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.predatorCount = 1
+            self.predatorCountToZero_widget.active = False
+    
+
+
+    def stateWidgetsToInactive(self):
+        self.stateTo1_widget.active = False
+        self.stateTo2_widget.active = False
+        self.stateTo3_widget.active = False
+        self.stateTo4_widget.active = False
+        self.stateTo5_widget.active = False
+                 
+    def stateTo1(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.state = 1
+            self.stateWidgetsToInactive()
+            
+    def stateTo2(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.state = 2
+            self.stateWidgetsToInactive()
+            
+    def stateTo3(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.state = 3
+            self.stateWidgetsToInactive()
+            
+    def stateTo4(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.state = 4
+            self.stateWidgetsToInactive()
+            
+    def stateTo5(self, instance, value):
+        if value:
+            self.mindCupolaVisualizerGavinController.state = 5
+            self.stateWidgetsToInactive()
+
+
+
+class MindCupolaVisualizerGavinControllerFlockWidget(BoxLayoutOrientationRelativeToParent):
+
+    def __init__(self, mindCupolaVisualizerGavinController=None, **kwargs):
+        super(MindCupolaVisualizerGavinControllerFlockWidget, self).__init__(**kwargs)
+        self.mindCupolaVisualizerGavinController = MindCupolaVisualizerGavinController() if mindCupolaVisualizerGavinController is None else mindCupolaVisualizerGavinController
+        assert isinstance(self.mindCupolaVisualizerGavinController, MindCupolaVisualizerGavinController)
+
+        #self.orientationInvertedFromParent = True
+        box = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=True)
+        self.add_widget(box)
+        
+        cohesiveDistance_widget = LabeledSlider(labelingString='cohesiveDistance',
+                                                value=self.mindCupolaVisualizerGavinController.cohesiveDistance,
+                                                min=self.mindCupolaVisualizerGavinController.property('cohesiveDistance').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('cohesiveDistance').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        cohesiveDistance_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('cohesiveDistance'))
+        self.mindCupolaVisualizerGavinController.bind(cohesiveDistance=cohesiveDistance_widget.setter('value'))
+        box.add_widget(cohesiveDistance_widget)
+
+        cruisingSpeed_widget = LabeledSlider(labelingString='cruisingSpeed',
+                                                value=self.mindCupolaVisualizerGavinController.cruisingSpeed,
+                                                min=self.mindCupolaVisualizerGavinController.property('cruisingSpeed').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('cruisingSpeed').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        cruisingSpeed_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('cruisingSpeed'))
+        self.mindCupolaVisualizerGavinController.bind(cruisingSpeed=cruisingSpeed_widget.setter('value'))
+        box.add_widget(cruisingSpeed_widget)
+
+        maxVelocity_widget = LabeledSlider(labelingString='maxVelocity',
+                                                value=self.mindCupolaVisualizerGavinController.maxVelocity,
+                                                min=self.mindCupolaVisualizerGavinController.property('maxVelocity').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('maxVelocity').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        maxVelocity_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('maxVelocity'))
+        self.mindCupolaVisualizerGavinController.bind(maxVelocity=maxVelocity_widget.setter('value'))
+        box.add_widget(maxVelocity_widget)
+        
+        attractionRate_widget = LabeledSlider(labelingString='attractionRate',
+                                                value=self.mindCupolaVisualizerGavinController.attractionRate,
+                                                min=self.mindCupolaVisualizerGavinController.property('attractionRate').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('attractionRate').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        attractionRate_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('attractionRate'))
+        self.mindCupolaVisualizerGavinController.bind(attractionRate=attractionRate_widget.setter('value'))
+        box.add_widget(attractionRate_widget)
+        
+        velocityRate_widget = LabeledSlider(labelingString='velocityRate',
+                                                value=self.mindCupolaVisualizerGavinController.velocityRate,
+                                                min=self.mindCupolaVisualizerGavinController.property('velocityRate').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('velocityRate').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        velocityRate_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('velocityRate'))
+        self.mindCupolaVisualizerGavinController.bind(velocityRate=velocityRate_widget.setter('value'))
+        box.add_widget(velocityRate_widget)
+        
+        migrateRate_widget = LabeledSlider(labelingString='migrateRate',
+                                                value=self.mindCupolaVisualizerGavinController.migrateRate,
+                                                min=self.mindCupolaVisualizerGavinController.property('migrateRate').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('migrateRate').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        migrateRate_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('migrateRate'))
+        self.mindCupolaVisualizerGavinController.bind(migrateRate=migrateRate_widget.setter('value'))
+        box.add_widget(migrateRate_widget)
+        
+        migrateOrbit_widget = LabeledSlider(labelingString='migrateOrbit',
+                                                value=self.mindCupolaVisualizerGavinController.migrateOrbit,
+                                                min=self.mindCupolaVisualizerGavinController.property('migrateOrbit').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('migrateOrbit').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        migrateOrbit_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('migrateOrbit'))
+        self.mindCupolaVisualizerGavinController.bind(migrateOrbit=migrateOrbit_widget.setter('value'))
+        box.add_widget(migrateOrbit_widget)
+        
+        localMigrateOrbit_widget = LabeledSlider(labelingString='localMigrateOrbit',
+                                                value=self.mindCupolaVisualizerGavinController.localMigrateOrbit,
+                                                min=self.mindCupolaVisualizerGavinController.property('localMigrateOrbit').get_min(self.mindCupolaVisualizerGavinController),
+                                                max=self.mindCupolaVisualizerGavinController.property('localMigrateOrbit').get_max(self.mindCupolaVisualizerGavinController),
+                                                orientationInvertedFromParent=False,
+                                                )
+        localMigrateOrbit_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('localMigrateOrbit'))
+        self.mindCupolaVisualizerGavinController.bind(localMigrateOrbit=localMigrateOrbit_widget.setter('value'))
+        box.add_widget(localMigrateOrbit_widget)
+
            
 #        eyeCalibrationPositionX_widget = LabeledSlider(labelingString='eyeCalibrationPositionX', value=self.mindCupolaVisualizerGavinController.eyeCalibrationPositionX, min=0, max=1)
 #        eyeCalibrationPositionX_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('eyeCalibrationPositionX'))
@@ -932,8 +952,12 @@ class MindCupolaVisualizerGavinControllerWidgetTestApp(App):
         assert isinstance(self.mindCupolaVisualizerGavinController, MindCupolaVisualizerGavinController)
     
     def build(self):
-        mindCupolaVisualizerGavinControllerWidget = MindCupolaVisualizerGavinControllerWidget(mindCupolaVisualizerGavinController=self.mindCupolaVisualizerGavinController, orientation='horizontal')
-        return mindCupolaVisualizerGavinControllerWidget
+        box = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=False)
+        mindCupolaVisualizerGavinControllerMainWidget = MindCupolaVisualizerGavinControllerMainWidget(mindCupolaVisualizerGavinController=self.mindCupolaVisualizerGavinController, orientation='horizontal')
+        mindCupolaVisualizerGavinControllerFlockWidget = MindCupolaVisualizerGavinControllerFlockWidget(mindCupolaVisualizerGavinController=self.mindCupolaVisualizerGavinController, orientation='horizontal')
+        box.add_widget(mindCupolaVisualizerGavinControllerMainWidget)
+        box.add_widget(mindCupolaVisualizerGavinControllerFlockWidget)
+        return box
                         
 # self run, self test     
 if __name__ == "__main__":
