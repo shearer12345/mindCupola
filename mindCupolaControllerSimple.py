@@ -456,10 +456,11 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.label import Label 
 
-from kivyUtils import LabeledSwitch, LabeledSlider, LabeledLabel, LabeledCheckBox
+from kivyUtils import LabeledSwitch, LabeledSlider, LabeledLabel, LabeledCheckBox,\
+    BoxLayoutOrientationRelativeToParent
 
 from eyeTracker import EyeTrackerWidget
-from mindCupolaVisualizerGavinController import  MindCupolaVisualizerGavinControllerWidget
+from mindCupolaVisualizerGavinController import  MindCupolaVisualizerGavinControllerMainWidget, MindCupolaVisualizerGavinControllerFlockWidget
 
 class MindCupolaControllerSimpleWidget(BoxLayout):
 
@@ -502,14 +503,20 @@ class MindCupolaControllerSimpleWidget(BoxLayout):
         # Visualizer #
         ##############
         
-        self.visualizerBox = BoxLayout(orientation='vertical')
+        self.visualizerBox = BoxLayout(orientation='vertical', size_hint_x=1.4)
         self.add_widget(self.visualizerBox)
         
         self.visualizerLabel = Label(text='Visualiser', size_hint_y=0.1)
         self.visualizerBox.add_widget(self.visualizerLabel)
         
-        self.mcvWidget = MindCupolaVisualizerGavinControllerWidget(mindCupolaVisualizerGavinController=mindCupolaControllerSimple.mindCupolaVisualizerGavinController, orientation='horizontal', size_hint_y=0.9)
-        self.visualizerBox.add_widget(self.mcvWidget)    
+        self.visualizerSubBox = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=True, size_hint_y=0.9)
+        self.visualizerBox.add_widget(self.visualizerSubBox)
+        
+        self.mcvMainWidget = MindCupolaVisualizerGavinControllerMainWidget(mindCupolaVisualizerGavinController=mindCupolaControllerSimple.mindCupolaVisualizerGavinController, orientation='horizontal', size_hint_x=0.7)
+        self.visualizerSubBox.add_widget(self.mcvMainWidget)
+        
+        self.mcvFlockWidget = MindCupolaVisualizerGavinControllerFlockWidget(mindCupolaVisualizerGavinController=mindCupolaControllerSimple.mindCupolaVisualizerGavinController, orientation='horizontal', size_hint_x=0.3)
+        self.visualizerSubBox.add_widget(self.mcvFlockWidget)      
         
         #############
         # Auralizer #
