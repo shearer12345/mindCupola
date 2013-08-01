@@ -10,7 +10,8 @@ from kivy.uix.label import Label
 from kivy.uix.slider import Slider
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.switch import Switch
-from kivy.properties import StringProperty, NumericProperty, BooleanProperty
+from kivy.uix.button import Button
+from kivy.properties import StringProperty, NumericProperty, BooleanProperty, OptionProperty
 
 class BoxLayoutOrientationRelativeToParent(BoxLayout):
     def __init__(self, orientationInvertedFromParent=True, **kwargs):
@@ -47,6 +48,22 @@ class SliderOrientationRelativeToParent(Slider):
 class CheckBoxOrientationRelativeToParent(CheckBox):
     def __init__(self, orientationInvertedFromParent=True, **kwargs):
         super(CheckBoxOrientationRelativeToParent, self).__init__(**kwargs)
+        self.orientationInvertedFromParent = orientationInvertedFromParent
+        
+    def on_parent(self, instance, value):
+        if  hasattr(self, 'orientation') and \
+            hasattr(self, 'parent') and \
+            hasattr(self.parent, 'orientation') and \
+            self.parent is not None:
+                assert hasattr(self, 'orientationInvertedFromParent')
+                if self.orientationInvertedFromParent:
+                    self.orientation = 'horizontal' if self.parent.orientation is 'vertical' else 'vertical'
+                else:
+                    self.orientation = 'horizontal' if self.parent.orientation is 'horizontal' else 'vertical'
+
+class ButtonOrientationRelativeToParent(Button):
+    def __init__(self, orientationInvertedFromParent=True, **kwargs):
+        super(ButtonOrientationRelativeToParent, self).__init__(**kwargs)
         self.orientationInvertedFromParent = orientationInvertedFromParent
         
     def on_parent(self, instance, value):
@@ -148,6 +165,41 @@ class LabeledCheckBox(BoxLayoutOrientationRelativeToParent):
         self.add_widget(self.labelingWidget)
         self.add_widget(self.checkBoxWidget)
         
+class LabeledButton(BoxLayoutOrientationRelativeToParent):
+    
+    labelingString = StringProperty('dummy button label ')
+    buttonText = StringProperty('dummy button text')
+    labelingWidget = None
+    buttonWidget = None
+    buttonState = OptionProperty('normal', options=('normal', 'down'))
+    
+    def __init__(self, labelingString, buttonText, **kwargs): #TODO 6 add initial state to the Button
+        super(LabeledButton, self).__init__(**kwargs)
+        
+        assert type(labelingString) is str
+        assert type(buttonText) is str
+        
+        #kwargs['orientationInvertedFromParent'] = True
+        self.labelingWidget = LabelOrientationRelativeToParent(text=labelingString, **kwargs)
+        self.buttonWidget = ButtonOrientationRelativeToParent(text=buttonText, **kwargs)
+
+        # double bind labelText
+        self.labelingWidget.bind(text=self.setter('labelingString'))
+        self.bind(labelingString=self.labelingWidget.setter('text'))
+        
+        # double bind text
+        self.buttonWidget.bind(text=self.setter('buttonText'))
+        self.bind(buttonText=self.buttonWidget.setter('text'))
+        
+        #double bind state
+        self.buttonState = self.buttonWidget.state #copy button state to self
+        #print self.buttonWidget.state
+        self.buttonWidget.bind(state=self.setter('buttonState'))
+        self.bind(buttonState=self.buttonWidget.setter('state'))
+        
+        self.add_widget(self.labelingWidget)
+        self.add_widget(self.buttonWidget)
+
 class LabeledLabel(BoxLayoutOrientationRelativeToParent):
     
     labelingString = StringProperty('dummy label label ')
@@ -223,9 +275,19 @@ class kivyUtilsTestApp(App):
         
         layout.add_widget(LabeledSwitch(labelingString='labeledSwitch', active=False))
         
+        lButton = LabeledButton(labelingString='labeledButton', buttonText='a button')
+        layout.add_widget(lButton)
+        
+        lButton.bind(buttonState=self.labeledButtonListener)
+        
         return layout
 
-
+    def labeledButtonListener(self, instance, value):
+        if value=='down':
+            print 'The labeledButon was pressed'
+        elif value=='normal':
+            print 'The labeledButon was released'
+        
 
 
 # self run, self test     
