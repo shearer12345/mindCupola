@@ -4,23 +4,23 @@ Created on 21 Jul 2012
 @author: shearer
 '''
 
-import re
-import os
+#import re
+#import os
 import sys
 #from optparse import OptionParser
 
-from xml.dom.minidom import parseString
+#from xml.dom.minidom import parseString
 from xml.etree import ElementTree
 
-from functools import partial
+#from functools import partial
 
-import numpy as np
-from datetime import timedelta
+#import numpy as np
+#from datetime import timedelta
 #from pandas import *
         
 from kivy.support import install_twisted_reactor
 #from pandas.tools.merge import concat
-from pydoc import deque
+#from pydoc import deque
 install_twisted_reactor() 
 
 try:
@@ -37,15 +37,14 @@ except:
 
 from kivy.logger import Logger
 from kivy.event import EventDispatcher
-from kivy.properties import NumericProperty, StringProperty, BooleanProperty, ReferenceListProperty, ObjectProperty
+from kivy.properties import NumericProperty, BoundedNumericProperty, StringProperty, BooleanProperty, ReferenceListProperty#, ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock
 
-from stringUtils import stringToBestType, stringReplace, insertLineBreaks
+from stringUtils import stringToBestType#, stringReplace, insertLineBreaks
 from mindCupolaPythonUtils import whoAmI, lineno
-from kivyUtils import LabeledSlider, LabeledCheckBox, LabeledLabel, LabeledSwitch,\
-    BoxLayoutOrientationRelativeToParent
-#from deprecated import deprecated
+from kivyUtils import BoxLayoutOrientationRelativeToParent, LabeledButton, LabeledSlider, LabeledSwitch#, LabeledCheckBox, LabeledLabel,
+
  
 class EyeTrackerProtocol(LineReceiver):
     
@@ -307,14 +306,16 @@ class EyeTrackerProtocol(LineReceiver):
                 #running Total will be in range [0,18] (left eye, right eye, for 9 calibration points
                 Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Calibration Complete. Calibration score = ' + str(runningTotal) + ' out of 18')
                 print 'got calibration result of ' + str(runningTotal),
-                #TODO 2 decrease goodCalibrationThreshold a little after each failure to increase chance of calibration
                 
                 if runningTotal > et.goodCalibrationThreshold: #good calibration threshold
                     et.goodCalibration = True
-                    print ' (GOOD)'
+                    print ' (GOOD) '
+                    et.goodCalibrationThreshold = et.property('goodCalibrationThreshold').get_min(et)
                 else:
-                    print ' (BAD)'
+                    print ' (BAD) lowering goodCalibrationThreshold'
                     et.badCalibration = True
+                    
+                    
             else:
                 Logger.exception(self.__class__.__name__ + ': in [' + whoAmI() + '] got eyetracker calibration for unknown ID: ' + attribDict['ID'])
             
@@ -479,6 +480,17 @@ class EyeTracker(EventDispatcher):
     calibrationCountdownTime = NumericProperty(5.0);
     #todo calibration countdown timer
     
+    def goodCalibrationThresholdReset(self):
+        self.goodCalibrationThreshold = self.property('goodCalibrationThreshold').get_max(self)
+        #print 'resetting goodCalibrationThreshold to', str(self.goodCalibrationThreshold)
+        
+    def goodCalibrationThresholdDecrement(self):
+        #TODO 0.5 figure out how much is appropriate to decrease at each failure
+        try:
+            self.goodCalibrationThreshold -= 1
+        except ValueError:
+            self.goodCalibrationThreshold = self.property('goodCalibrationThreshold').get_min(self)
+        
     calibrationActiveFlag = BooleanProperty(False)
     def on_calibrationActiveFlag(self, instance, value):
         print 'on_calibrationActiveFlag, value is: ', value
@@ -537,22 +549,33 @@ class EyeTracker(EventDispatcher):
         #TODO DONE 1.2 on timer run out make goodEyes = true
         
     goodCalibration = BooleanProperty(False)
-    goodCalibrationThreshold = 11
+    goodCalibrationThreshold = BoundedNumericProperty(11, min=4, max=11) #TODO 0.5 figure out appropriate bounds
     def on_goodCalibration(self, instance, value):
-        print 'on_goodCalibration, value is: ', value
+        if value:
+            pass
+        else:
+            pass
+        #print 'on_goodCalibration, value is: ', value
         
     badCalibration = BooleanProperty(False)
-    def on_badCalibration(self, instance, value):
-        print 'on_badCalibration, value is: ', value
+    def on_badCalibration(self, instance, value):           
+        if value:
+            #TODO DONE 0 decrease goodCalibrationThreshold a little after each failure to increase chance of calibration
+            self.goodCalibrationThresholdDecrement()
+        else:
+            pass
+
         
-    def __init__(self, host = 'localhost', port = 4242, goodCalibrationThreshold=11):
+    def __init__(self, host = 'localhost', port = 4242, goodCalibrationThresholdMax=11):
         super(EyeTracker, self).__init__()
         assert type(host) is str
         assert type(port) is int
         self.host = host
         self.port = port
         self.wantToBeConnectedFlag = False
-        self.goodCalibrationThreshold = goodCalibrationThreshold
+        self.property('goodCalibrationThreshold').set_max(self, goodCalibrationThresholdMax) #set the max threshold
+        self.goodCalibrationThreshold = goodCalibrationThresholdMax #set the threshold to the new max
+        #self.goodCalibrationThreshold = goodCalibrationThreshold
         
         #self.bind(connectedFlag=self.on_connectedFlag)
         self.bind(pupilLeftValid=self.goodEyeCheck)
@@ -639,6 +662,23 @@ class EyeTrackerWidget(BoxLayout):
         self.eyeTracker.bind(calibrationShowFlag=self.calibrationShowFlag_widget.setter('active'))
         self.add_widget(self.calibrationShowFlag_widget)
         
+        self.goodCalibrationThreshold_widget = LabeledSlider(labelingString='GoodCalibrationThreshold', value=self.eyeTracker.goodCalibrationThreshold, min=self.eyeTracker.property('goodCalibrationThreshold').get_min(self.eyeTracker), max=self.eyeTracker.property('goodCalibrationThreshold').get_max(self.eyeTracker)) 
+        self.goodCalibrationThreshold_widget.bind(value=self.eyeTracker.setter('goodCalibrationThreshold'))
+        self.eyeTracker.bind(goodCalibrationThreshold=self.goodCalibrationThreshold_widget.setter('value'))
+        self.add_widget(self.goodCalibrationThreshold_widget)
+        
+        self.eyeTracker.bind(goodCalibrationThreshold=self.goodCalibrationThresholdChanged)
+        
+        self.goodCalibrationThresholdReset_widget = LabeledButton(labelingString='resetGoodCalibrationThreshold', buttonText='reset')
+        self.goodCalibrationThresholdReset_widget.bind(buttonState=self.checkResetButtonState)
+        self.add_widget(self.goodCalibrationThresholdReset_widget)
+        
+        
+        self.goodCalibrationThresholdDecrement_widget = LabeledButton(labelingString='decrementGoodCalibrationThreshold', buttonText='reset')
+        self.goodCalibrationThresholdDecrement_widget.bind(buttonState=self.checkDecrementButtonState)
+        self.add_widget(self.goodCalibrationThresholdDecrement_widget)
+        
+        
         self.pupilsValidBox = BoxLayoutOrientationRelativeToParent()
         self.add_widget(self.pupilsValidBox)
         
@@ -682,6 +722,20 @@ class EyeTrackerWidget(BoxLayout):
         self.eyeTracker.bind(calibrationActivePoint=self.calibrationActivePoint_widget.setter('value'))
         self.add_widget(self.calibrationActivePoint_widget)
         
+    def checkResetButtonState(self, instance, value):
+        if value=='down':
+            self.eyeTracker.goodCalibrationThresholdReset()
+        elif value=='normal':
+            pass
+    
+    def checkDecrementButtonState(self, instance, value):
+        if value=='down':
+            self.eyeTracker.goodCalibrationThresholdDecrement()
+        elif value=='normal':
+            pass
+        
+    def goodCalibrationThresholdChanged(self, instance, value):
+        print 'goodCalibrationThresholdChanged to ', str(value)
         
 from kivy.app import App
 class EyeTrackerWidgetTestApp(App):
@@ -701,7 +755,7 @@ class EyeTrackerWidgetTestApp(App):
 if __name__ == "__main__":
     host = 'localhost'
     host = '192.168.1.118'
-    eyeTracker = EyeTracker(host=host, goodCalibrationThreshold=8)
+    eyeTracker = EyeTracker(host=host, goodCalibrationThresholdMax=8)
     eyeTrackerWidgetTestApp = EyeTrackerWidgetTestApp(eyeTracker=eyeTracker)
     eyeTrackerWidgetTestApp.run()
     
