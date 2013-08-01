@@ -550,7 +550,7 @@ if __name__ == "__main__":
     Logger.info(__file__ + ': running from __name__')
     
     #TODO 5 add command line options, according to http://kivy.org/docs/api-kivy.config.html    
-    host = '192.168.1.119'#get_default_gateway_linux()
+    host = '192.168.1.118'#get_default_gateway_linux()
     
     etHost = host
     etPort = 4242

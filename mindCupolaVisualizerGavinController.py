@@ -192,7 +192,8 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
     cohesiveDistance = BoundedNumericProperty(7.5, min=cohesiveDistanceMin, max=200.0)
     def on_cohesiveDistance(self, instance, value):
         assert type(value) in [int, float]
-        value = max(self.cohesiveDistanceMin, value)
+        value = max(self.cohesiveDistanceMin, value
+                    )
         self.oscSender.send('flock/cohesiveDistance', float(value) )
         
     cruisingSpeedMin = 0.5
@@ -430,12 +431,12 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         #faceSad
         self.migrateShapeNumberTo9_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[9], active=False)
         self.migrateShapeNumberTo9_widget.bind(active=self.migrateShapeNumberTo9)
-        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo9_widget)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo9_widget)
         
         #faceHappy
         self.migrateShapeNumberTo8_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[8], active=False)
         self.migrateShapeNumberTo8_widget.bind(active=self.migrateShapeNumberTo8)
-        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo8_widget)
+        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo8_widget)
         
         #fishLeftWithTails
         self.migrateShapeNumberTo7_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[7], active=False)
@@ -450,7 +451,7 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         #arrowLeft
         self.migrateShapeNumberTo5_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[5], active=False)
         self.migrateShapeNumberTo5_widget.bind(active=self.migrateShapeNumberTo5)
-        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo5_widget)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo5_widget)
         
         #fishStripes
         self.migrateShapeNumberTo4_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[4], active=False)
@@ -465,12 +466,12 @@ class MindCupolaVisualizerGavinControllerWidget(BoxLayoutOrientationRelativeToPa
         #planeSide
         self.migrateShapeNumberTo2_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[2], active=False)
         self.migrateShapeNumberTo2_widget.bind(active=self.migrateShapeNumberTo2)
-        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo2_widget)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo2_widget)
         
         #planeTop
         self.migrateShapeNumberTo1_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[1], active=False)
         self.migrateShapeNumberTo1_widget.bind(active=self.migrateShapeNumberTo1)
-        migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo1_widget)
+        #migrateShapeNumberBox2.add_widget(self.migrateShapeNumberTo1_widget)
         
         self.migrateShapeNumberTo0_widget = LabeledSwitch(labelingString=self.mindCupolaVisualizerGavinController.migrateShapeDict[0], active=False)
         self.migrateShapeNumberTo0_widget.bind(active=self.migrateShapeNumberTo0)
@@ -918,7 +919,7 @@ class MindCupolaVisualizerGavinControllerWidgetTestApp(App):
 # self run, self test     
 if __name__ == "__main__":
     Logger.info(__file__ + ': running from __name__')
-    mcvgHost = '192.168.1.119'
+    mcvgHost = '192.168.1.118'
     
     mindCupolaVisualizerGavinController = MindCupolaVisualizerGavinController(host=mcvgHost, verbose=True)
     mindCupolaVisualizerGavinControllerWidgetTestApp = MindCupolaVisualizerGavinControllerWidgetTestApp(mindCupolaVisualizerGavinController=mindCupolaVisualizerGavinController)
