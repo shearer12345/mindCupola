@@ -31,9 +31,9 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.oscSender = OscSender(namespace_prefix=namespace_prefix, host=host, port=port, verbose=self.verbose)
         
         
-        self.forceSendAllKivyProperties()
+        self.sendAllKivyProperties()
         
-    def forceSendAllKivyProperties(self):
+    def sendAllKivyProperties(self):
         
         self.property('debug').dispatch(self)
         self.property('paused').dispatch(self)
