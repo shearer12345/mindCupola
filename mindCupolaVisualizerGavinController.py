@@ -33,7 +33,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         
         self.sendAllKivyProperties()
         
-    def sendAllKivyProperties(self):
+    def sendAllKivyProperties(self, instance=None, value=None):
         
         self.property('debug').dispatch(self)
         self.property('paused').dispatch(self)
@@ -252,7 +252,6 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         value = max(self.localMigrateOrbitMin, value)
         self.oscSender.send('flock/localMigrateOrbit', float(value) )    
         
-from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivyUtils import LabeledSwitch, LabeledSlider, LabeledLabel, LabeledCheckBox, BoxLayoutOrientationRelativeToParent
 
@@ -281,6 +280,10 @@ class MindCupolaVisualizerGavinControllerMainWidget(BoxLayoutOrientationRelative
         debug_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('debug'))
         self.mindCupolaVisualizerGavinController.bind(debug=debug_widget.setter('active'))
         box.add_widget(debug_widget)
+        
+        sendAllProperties_widget = Button(text='sendAllProperties')
+        sendAllProperties_widget.bind(on_press=self.mindCupolaVisualizerGavinController.sendAllKivyProperties)
+        box.add_widget(sendAllProperties_widget)         
         
         blur_widget = LabeledSlider(labelingString='blur',
                                                 value=self.mindCupolaVisualizerGavinController.blur,
