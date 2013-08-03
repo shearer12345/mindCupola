@@ -310,7 +310,7 @@ class EyeTrackerProtocol(LineReceiver):
                 if runningTotal > et.goodCalibrationThreshold: #good calibration threshold
                     et.goodCalibration = True
                     print ' (GOOD) '
-                    et.goodCalibrationThreshold = et.property('goodCalibrationThreshold').get_min(et)
+                    et.goodCalibrationThreshold = et.property('goodCalibrationThreshold').get_max(et)
                 else:
                     print ' (BAD) lowering goodCalibrationThreshold'
                     et.badCalibration = True
