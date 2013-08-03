@@ -159,7 +159,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         #TODO 4 get MCC running on Alienware - as VM
         #TODO 4 control the eye blur??
         
-        #TODO 5? in ComputerManagement->Services and Applications->Services. disable/stop desktop window manager session manager service - to stop the Boids game window to every 5 seconds flash up "not responding". probably doens't matter when in fullscreen mode and seems new, so maybe just need to free windows up a little
+        #TODO 5? in ComputerManagement->Services and Applications->Services. disable/stop desktop window manager session manager service - to stop the Boids game window to every 5 seconds flash up "not responding". probably doens't matter when in xen mode and seems new, so maybe just need to free windows up a little
         
         
         #TODO 5 insects run away from the eye?
@@ -277,10 +277,15 @@ class MindCupolaControllerSimple(EventDispatcher):
     def on_boidType(self, instance, value):
         assert type(value) in [int, float]
         value = int(value)
-        print 'in on_boidType. value is ' + str(value) + ' meaning: ' + self.mindCupolaVisualizerGavinController.boidDict[value]
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Boidtype is ' + str(value) + ' meaning: ' + self.mindCupolaVisualizerGavinController.boidDict[value])
         if 0 <=  value < len(self.mindCupolaVisualizerGavinController.boidDict):
             #sending boidType as INT
             self.auralizerOscSender.send('boidType', self.mindCupolaVisualizerGavinController.boidDict[value])
+            
+        #do boidType change stuff
+        Clock.unschedule(self.boidTypeTimeOut)
+        Clock.schedule_interval(self.boidTypeTimeOut, 3) #TODO 0.5 choose appropriate boidTypeTimeOut timer value, and add variance
+        
               
     def on_state(self, instance, value):
         assert type(value) in [int, float]
@@ -451,6 +456,26 @@ class MindCupolaControllerSimple(EventDispatcher):
         #TODO 1.1 drive the attractor points around to give random motion
         Logger.warning(self.__class__.__name__ + ': in [' + whoAmI() + '] Self targetting boids NOT implemented yet')
     
+    def boidTypeTimeOut(self, dt=None):
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Hit boidTypeTimeOut')
+        
+        boidTypeString = self.mindCupolaVisualizerGavinController.boidDict[self.mindCupolaVisualizerGavinController.boidType]
+        predatorCount = self.mindCupolaVisualizerGavinController.predatorCount
+        if boidTypeString == 'bird':
+            if predatorCount < 1:
+                pass
+            pass #TODO 0
+        elif boidTypeString == 'amoeba':
+            pass
+        elif boidTypeString == 'insect':
+            pass
+        elif boidTypeString == 'fish':
+            pass
+
+
+
+        
+        
 #UIX        
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -523,7 +548,7 @@ class MindCupolaControllerSimpleWidget(BoxLayout):
         #############
         
         self.auralizerBox = BoxLayout(orientation='vertical', size_hint_x=0.4)
-        self.add_widget(self.auralizerBox)
+        #self.add_widget(self.auralizerBox)
         
         self.auralizerLabel = Label(text='Auralizer', size_hint_y=0.1)
         self.auralizerBox.add_widget(self.auralizerLabel)
@@ -569,7 +594,7 @@ if __name__ == "__main__":
     et.wantToBeConnectedFlag = True
     
     mcar = MindCupolaArduinoController()
-    mcar.manualMode = False
+    mcar.manualMode = True
     
     mcvHost = host
     mcv = MindCupolaVisualizerGavinController(host=mcvHost, verbose=False)
