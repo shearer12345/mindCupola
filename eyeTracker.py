@@ -485,9 +485,8 @@ class EyeTracker(EventDispatcher):
         #print 'resetting goodCalibrationThreshold to', str(self.goodCalibrationThreshold)
         
     def goodCalibrationThresholdDecrement(self):
-        #TODO 0.5 figure out how much is appropriate to decrease at each failure
         try:
-            self.goodCalibrationThreshold -= 1
+            self.goodCalibrationThreshold -= 1 
         except ValueError:
             self.goodCalibrationThreshold = self.property('goodCalibrationThreshold').get_min(self)
         
@@ -549,7 +548,7 @@ class EyeTracker(EventDispatcher):
         #TODO DONE 1.2 on timer run out make goodEyes = true
         
     goodCalibration = BooleanProperty(False)
-    goodCalibrationThreshold = BoundedNumericProperty(11, min=4, max=11) #TODO 0.5 figure out appropriate bounds
+    goodCalibrationThreshold = BoundedNumericProperty(11, min=4, max=11) #TODO 4.5 figure out appropriate bounds
     def on_goodCalibration(self, instance, value):
         if value:
             pass
