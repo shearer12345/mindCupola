@@ -37,7 +37,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         
         self.property('debug').dispatch(self)
         self.property('paused').dispatch(self)
-        self.property('fullscreen').dispatch(self)
+        #self.property('fullscreen').dispatch(self)
         
         self.property('state').dispatch(self)
         
@@ -86,8 +86,10 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.oscSender.send('blur', float(value) )
         
     ##attractor
-    attractorPositionX = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
-    attractorPositionY = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
+#    attractorPositionX = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
+#    attractorPositionY = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
+    attractorPositionX = NumericProperty(0.0, min=-2.0, max=2.0) #TODO 2 manage values out of range? or 
+    attractorPositionY = NumericProperty(0.0, min=-2.0, max=2.0)
     attractorPosition  = ReferenceListProperty(attractorPositionX, attractorPositionY)
     def on_attractorPosition(self, instance, value):
         #print instance, value
