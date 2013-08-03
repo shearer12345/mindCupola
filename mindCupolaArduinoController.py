@@ -92,11 +92,11 @@ class MindCupolaArduinoProtocol(Protocol):
     def dataReceived(self, data):
 #        print data
         if len(data) == 1:
-            i = int(data)
-            assert 0 <= i 
-            assert i <= 3
-#             Logger.trace(self.__class__.__name__ + ': in ' + whoAmI() + '. ' + 'State is: ' + state)
-            self.mindCupolaArduinoController.setModeAutomatically(i)
+            state = int(data)
+            assert 0 <= state 
+            assert state <= 3
+            Logger.debug(self.__class__.__name__ + ': in ' + whoAmI() + '. ' + 'State is: ' + state)
+            self.mindCupolaArduinoController.setModeAutomatically(state)
             
     def testOutput(self):
         #=======================================================================
@@ -157,13 +157,13 @@ class MindCupolaArduinoProtocol(Protocol):
     
 class MindCupolaArduinoController(EventDispatcher):
     
-    manualMode          = BooleanProperty(False)
+    manualMode          = BooleanProperty(True)
     def on_manualMode(self, instance, value):
         assert type(value) in [bool]
         Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] manualMode is ' + str(self.manualMode) )
     
     presenceString      = StringProperty('default')
-    presenceState       = BoundedNumericProperty(1, min=0, max=3)
+    presenceState       = BoundedNumericProperty(2, min=0, max=3)
     def on_presenceState(self, instance, value):
         assert type(value) in [int, float]
         self.presenceString = self.stateDictionary[int(round(self.presenceState))]
@@ -333,7 +333,7 @@ class MindCupolaArduinoControllerWidgetTestApp(App):
 if __name__ == "__main__":
     Logger.info(__file__ + ': running from __name__')
     mindCupolaArduinoController=MindCupolaArduinoController()
-    mindCupolaArduinoController.manualMode = False
+    mindCupolaArduinoController.manualMode = True
     mindCupolaArduinoControllerWidgetTestApp = MindCupolaArduinoControllerWidgetTestApp(mindCupolaArduinoController=mindCupolaArduinoController)
     
     mindCupolaArduinoControllerWidgetTestApp.run()
