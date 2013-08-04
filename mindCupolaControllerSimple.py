@@ -231,14 +231,13 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.auralizerOscSender.send('flock/attractorLocation', value)
         self.calcArousal(instance, value)
 
-
     arousal = NumericProperty(0)
-    arousalWindow = 50 #TODO 0.6 adjust windowsize?
+    arousalWindow = 50 #TODO 0.6 adjust windowsize? have a short term and a long term?
     
     eyePosLast = [0.0, 0.0]
     eyePosTimeLast = Clock.get_boottime()
     def calcArousal(self, instance, value):
-        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] ')
+        #Logger.trace(self.__class__.__name__ + ': in [' + whoAmI() + '] ')
         
         assert type(value) in [list]
         assert len(value) is 2
@@ -506,47 +505,66 @@ class MindCupolaControllerSimple(EventDispatcher):
     def boidTypeTimeOut(self, dt=None):
         Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Hit boidTypeTimeOut')
         
+        if self.mindCupolaVisualizerGavinController.state != 5:
+            return #bail if not in running mode
+                
         boidTypeString = self.mindCupolaVisualizerGavinController.boidDict[self.mindCupolaVisualizerGavinController.boidType]
         predatorCount = self.mindCupolaVisualizerGavinController.predatorCount
-        if boidTypeString == 'bird':
-            if predatorCount < 1:
-                option = choice(['introducePredator', 'changeBoidType'])
-                if option == 'introducePredator':
-                    predatorCount += 1
-                elif option == 'changeBoidType':
-                    if self.arousal < self.arousalThresholdLower:
-                        #    boidDict = {        0: 'bird',
-                        #1: 'amoeba',
-                        boidType = 3 #fish
-                    else:
-                        boidType = 2 #insect
+        
+        if predatorCount > 0:
+            predatorCount = 0
+            #TODO 1 do more when predators are removed?
+            
+        elif boidTypeString == 'bird':
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    self.boidType = 2 #insect #more dynamic
                 else:
-                    raise 'badOption'
+                    self.boidType = 3 #fish #calmer
             else:
-                pass #TODO 0 birds with predators
+                raise 'badOption'
 
         elif boidTypeString == 'amoeba':
-            if predatorCount < 1:
-                pass #TODO 0.1 amoeba without predators
+            #how do we get here
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    self.boidType = 3 #fish #more dynamic than amoeba
+                else:
+                    pass #do nothing. There is no calmer state
             else:
-                pass #TODO 0.1 amoeba with predators
+                raise 'badOption'
             
         elif boidTypeString == 'insect':
-            if predatorCount < 1:
-                pass #TODO 0.2 insects without predators
+            #got here because aroused?
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    predatorCount = 1 #introduce more challenge
+                else:
+                    self.boidType = 0 #birds revert to calmer 
             else:
-                pass #TODO 0.2 insects with predators
-            
+                raise 'badOption'
+
         elif boidTypeString == 'fish':
-            if predatorCount < 1:
-                pass #TODO 0.3 fish without predators
+            #got here because aroused?
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    self.boidType = 2 #insect 
+                else:
+                    self.boidType = 0 #birds #more control
             else:
-                pass #TODO 0.3 fish with predators
-            
-
-
-
-        
+                raise 'badOption'
         
 #UIX        
 from kivy.uix.boxlayout import BoxLayout

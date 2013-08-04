@@ -61,10 +61,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.property('migrateRate').dispatch(self)
         self.property('migrateOrbit').dispatch(self)
         self.property('blur').dispatch(self)
-        
-        
-        
-        
+    
     fullscreen        = BooleanProperty(False)
     def on_fullscreen(self, instance, value):
         assert type(value) in [bool]
@@ -197,8 +194,9 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         #Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ' Line: ' + str(lineno()) + ']') 
         #print 'send OSC specialEffectTriggered: ' + value
         
-    cohesiveDistanceMin = 0.5
+    cohesiveDistanceMin = 0.5 #
     cohesiveDistance = BoundedNumericProperty(7.5, min=cohesiveDistanceMin, max=200.0)
+    #amoeba 2.66
     def on_cohesiveDistance(self, instance, value):
         assert type(value) in [int, float]
         value = max(self.cohesiveDistanceMin, value
@@ -238,6 +236,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
     def on_migrateRate(self, instance, value):
         assert type(value) in [int, float]
         value = max(self.migrateRateMin, value)
+        #print 'migrateRate=', str(value)
         self.oscSender.send('flock/migrateRate', float(value) )    
     
     migrateOrbitMin = 0.5
