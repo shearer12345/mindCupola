@@ -6,6 +6,7 @@ Created on 19 Aug 2012
 import sys
 
 from types import NoneType
+from random import choice
 
 from kivy.support import install_twisted_reactor
 from mindCupolaArduinoController import MindCupolaArduinoController, MindCupolaArduinoControllerWidget
@@ -13,7 +14,7 @@ install_twisted_reactor()
 
 from kivy.config import Config
 Config.set('graphics', 'width', '1200')
-Config.set('graphics', 'height', '700')
+Config.set('graphics', 'height', '600')
 from kivy import Logger
 from kivy.uix.settings import Settings
 from kivy.clock import Clock
@@ -90,6 +91,8 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.mindCupolaArduinoController.bind(fanState=self.on_fanState)
         self.mindCupolaArduinoController.bind(heaterState=self.on_heaterState)
         
+        self.mindCupolaVisualizerGavinController.bind(attractorPosition=self.on_attractorPosition)
+        #self.mindCupolaVisualizerGavinController.bind(attractorPositionX=self.on_attractorPosition)
         self.boidStateSet('bird')
         
         #TODO ADAM 4 sound effect for entering state "running" - "/mca/interactionState running"
@@ -111,14 +114,6 @@ class MindCupolaControllerSimple(EventDispatcher):
                 fish
                 insects
             
-            Pleasure - not using
-            Arousal - more eye movement, controlling boidType
-                very little eye movement -> amoeba
-                some eye movement -> birds
-                quite a lot of eye movement -> fish
-                lots of movement -> insects
-                
-            Dominance - longer fixations, controlling predator count
         '''
         
         #TODO 1.1 When should of the visual effects happen: - do these need (at this point) accompanying sound effects
@@ -221,8 +216,68 @@ class MindCupolaControllerSimple(EventDispatcher):
         #TODO DONE 3 bring calibration points in a little (and the left/right)
         #TODO DONE 3 enlarge calibration points a little
         
-    #TODO DONE 1 send predator count to auralizer when it changes
+#    Pleasure - not using
+#    Arousal - more eye movement, controlling boidType
+#        very little eye movement -> amoeba
+#        some eye movement -> birds
+#        quite a lot of eye movement -> fish
+#        lots of movement -> insects
+#    
+#    Dominance - longer fixations, controlling predator count
+
+    def on_attractorPosition(self, instance, value):
+        assert type(value) in [list]
+        assert len(value) is 2
+        self.auralizerOscSender.send('flock/attractorLocation', value)
+        self.calcArousal(instance, value)
+
+
+    arousal = NumericProperty(0)
+    arousalWindow = 50 #TODO 0.6 adjust windowsize?
+    
+    eyePosLast = [0.0, 0.0]
+    eyePosTimeLast = Clock.get_boottime()
+    def calcArousal(self, instance, value):
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] ')
+        
+        assert type(value) in [list]
+        assert len(value) is 2
+        
+        eyePosNow = [min(1.0,max(-1.0, x)) for x in value] #limit to -1,0 to 1.0
+        eyePosDiff = [b - a for a, b in zip(self.eyePosLast, eyePosNow) ] #calc difference
+        self.eyePosLast = eyePosNow #update last value
+        
+        eyePosTimeNow = Clock.get_boottime() #get time now
+        eyePosTimeDiff = eyePosTimeNow - self.eyePosTimeLast #calc difference
+        self.eyePosTimeLast = eyePosTimeNow #update last value
+        
+        eyePosDiffDistance = abs(sum(eyePosDiff) / len(eyePosDiff)) #calc difference distance
+        try:
+            arousalNow = eyePosDiffDistance / eyePosTimeDiff #adjust for time
+        except ZeroDivisionError:
+            arousalNow = eyePosDiffDistance
+            
+        
+        #hack - pretty bad way of computing average
+        self.arousal = ((self.arousal * (self.arousalWindow - 1)) + arousalNow) / self.arousalWindow
+
+    def on_arousal(self, instance, value):
+        pass
+        #print 'arousal=', str(value)
+    
+    
+    aroused = BooleanProperty(False)
+    arousalThresholdWhenTrue = 0.005
+    arousalThresholdWhenFalse = 0.008
+    assert arousalThresholdWhenTrue <= arousalThresholdWhenFalse #
+    
+    dominance = NumericProperty(0)
+    #based on length of fixations
+    def calcDominance(self, instance, value): #called
+        pass
+    
     def on_predatorCount(self, instance, value):
+        #TODO DONE 1 send predator count to auralizer when it changes
         assert type(value) in [int, float]
         self.auralizerOscSender.send('predatorCount', int(value))
         
@@ -293,14 +348,6 @@ class MindCupolaControllerSimple(EventDispatcher):
         if 1 <= value <= len(self.mindCupolaVisualizerGavinController.stateDict)+1: 
             #sending interactionState as STRING
             self.auralizerOscSender.send('interactionState', self.mindCupolaVisualizerGavinController.stateDict[value])
-
-    def on_attractorPosition(self, instance, value):
-        #print instance, value
-        #print type(value)
-        assert type(value) in [list]
-        assert len(value) is 2
-#        if value.attractorPositionX >= -1.0 and value.attractorPositionX <= 1.0 and value.attractorPositionY >= -1.0 and value.attractorPositionY <= 1.0:
-        self.auralizerOscSender.send('flock/attractorLocation', value)
 
     #TODO DONE 1 send auralizer message calibration point change
     def on_calibrationTarget(self, instance, value):
@@ -463,14 +510,39 @@ class MindCupolaControllerSimple(EventDispatcher):
         predatorCount = self.mindCupolaVisualizerGavinController.predatorCount
         if boidTypeString == 'bird':
             if predatorCount < 1:
-                pass
-            pass #TODO 0
+                option = choice(['introducePredator', 'changeBoidType'])
+                if option == 'introducePredator':
+                    predatorCount += 1
+                elif option == 'changeBoidType':
+                    if self.arousal < self.arousalThresholdLower:
+                        #    boidDict = {        0: 'bird',
+                        #1: 'amoeba',
+                        boidType = 3 #fish
+                    else:
+                        boidType = 2 #insect
+                else:
+                    raise 'badOption'
+            else:
+                pass #TODO 0 birds with predators
+
         elif boidTypeString == 'amoeba':
-            pass
+            if predatorCount < 1:
+                pass #TODO 0.1 amoeba without predators
+            else:
+                pass #TODO 0.1 amoeba with predators
+            
         elif boidTypeString == 'insect':
-            pass
+            if predatorCount < 1:
+                pass #TODO 0.2 insects without predators
+            else:
+                pass #TODO 0.2 insects with predators
+            
         elif boidTypeString == 'fish':
-            pass
+            if predatorCount < 1:
+                pass #TODO 0.3 fish without predators
+            else:
+                pass #TODO 0.3 fish with predators
+            
 
 
 
@@ -558,10 +630,21 @@ class MindCupolaControllerSimpleWidget(BoxLayout):
         #FIXME 3 generates a key error, so can't change the value from the UI self.mindCupolaControllerSimple.bind(auralizerVerbose=self.auralizerVerbose_widget.setter('active'))
         self.auralizerBox.add_widget(self.auralizerVerbose_widget)
         
+        #######
+        # PAD #
+        #######
         
-    def tmp(self, **kwargs):
-        print 'in tmp'
+        self.padBox = BoxLayout(orientation='vertical', size_hint_x=0.4)
+        self.add_widget(self.padBox)
         
+        self.padLabel = Label(text='PAD', size_hint_y=0.1)
+        self.padBox.add_widget(self.padLabel)
+        
+        self.arousal_widget = LabeledSlider(labelingString='arousal', value=self.mindCupolaControllerSimple.arousal, min=0.0, max=1.0)
+        self.arousal_widget.bind(value=self.mindCupolaControllerSimple.setter('arousal'))
+        self.mindCupolaControllerSimple.bind(arousal=self.arousal_widget.setter('value'))
+        self.padBox.add_widget(self.arousal_widget)
+            
 from kivy.app import App
 class MindCupolaControllerSimpleWidgetTestApp(App):
     
