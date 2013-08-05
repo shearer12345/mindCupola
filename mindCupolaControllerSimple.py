@@ -232,7 +232,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.calcArousal(instance, value)
 
     arousal = NumericProperty(0)
-    arousalWindow = 50 #TODO 0.6 adjust windowsize? have a short term and a long term?
+    arousalWindow = 100 #TODO 0.6 adjust windowsize? have a short term and a long term?
     
     eyePosLast = [0.0, 0.0]
     eyePosTimeLast = Clock.get_boottime()
@@ -260,15 +260,23 @@ class MindCupolaControllerSimple(EventDispatcher):
         #hack - pretty bad way of computing average
         self.arousal = ((self.arousal * (self.arousalWindow - 1)) + arousalNow) / self.arousalWindow
 
-    def on_arousal(self, instance, value):
-        pass
-        #print 'arousal=', str(value)
-    
-    
-    aroused = BooleanProperty(False)
-    arousalThresholdWhenTrue = 0.005
-    arousalThresholdWhenFalse = 0.008
+    arousalThresholdWhenTrue = 0.08
+    arousalThresholdWhenFalse = 0.10
     assert arousalThresholdWhenTrue <= arousalThresholdWhenFalse #
+    
+    def on_arousal(self, instance, value):
+        print 'arousal=', str(value)
+        if self.aroused:
+            if value < self.arousalThresholdWhenTrue:
+                self.aroused = False
+        else:
+            if value < self.arousalThresholdWhenFalse:
+                self.aroused = True
+                
+    aroused = BooleanProperty(False)
+    def on_aroused(self, instance, value):
+        pass
+        print '**aroused=='+str(value)
     
     dominance = NumericProperty(0)
     #based on length of fixations
