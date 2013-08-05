@@ -232,7 +232,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.calcArousal(instance, value)
 
     arousal = NumericProperty(0)
-    arousalWindow = 100 #TODO 0.6 adjust windowsize? have a short term and a long term?
+    arousalWindow = 300 #TODO 0.6 adjust windowsize? have a short term and a long term?
     
     eyePosLast = [0.0, 0.0]
     eyePosTimeLast = Clock.get_boottime()
@@ -270,7 +270,7 @@ class MindCupolaControllerSimple(EventDispatcher):
             if value < self.arousalThresholdWhenTrue:
                 self.aroused = False
         else:
-            if value < self.arousalThresholdWhenFalse:
+            if value > self.arousalThresholdWhenFalse:
                 self.aroused = True
                 
     aroused = BooleanProperty(False)
@@ -702,17 +702,26 @@ class MindCupolaControllerSimpleWidget(BoxLayout):
         # PAD #
         #######
         
-        self.padBox = BoxLayout(orientation='vertical', size_hint_x=0.4)
+        self.padBox = BoxLayoutOrientationRelativeToParent(orientationInvertedFromParent=False, size_hint_x=0.4)
         self.add_widget(self.padBox)
         
-        self.padLabel = Label(text='PAD', size_hint_y=0.1)
-        self.padBox.add_widget(self.padLabel)
+        self.arousalBox = BoxLayoutOrientationRelativeToParent()
+        self.padBox.add_widget(self.arousalBox)
         
-        self.arousal_widget = LabeledSlider(labelingString='arousal', value=self.mindCupolaControllerSimple.arousal, min=0.0, max=1.0)
+        self.padLabel = Label(text='PAD', size_hint_y=0.1)
+        self.arousalBox.add_widget(self.padLabel)
+        
+        self.arousal_widget = LabeledSlider(labelingString='arousal', value=self.mindCupolaControllerSimple.arousal, min=0.0, max=0.2)
         self.arousal_widget.bind(value=self.mindCupolaControllerSimple.setter('arousal'))
         self.mindCupolaControllerSimple.bind(arousal=self.arousal_widget.setter('value'))
-        self.padBox.add_widget(self.arousal_widget)
-            
+        self.arousalBox.add_widget(self.arousal_widget)
+        
+        aroused_widget = LabeledSwitch(labelingString='aroused', active=self.mindCupolaControllerSimple.aroused)
+        aroused_widget.bind(active=self.mindCupolaControllerSimple.setter('aroused'))
+        self.mindCupolaControllerSimple.bind(aroused=aroused_widget.setter('active'))
+        self.arousalBox.add_widget(aroused_widget)
+
+        
 from kivy.app import App
 class MindCupolaControllerSimpleWidgetTestApp(App):
     
