@@ -62,7 +62,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.property('migrateOrbit').dispatch(self)
         self.property('blur').dispatch(self)
     
-    fullscreen        = BooleanProperty(False)
+    fullscreen = BooleanProperty(False)
     def on_fullscreen(self, instance, value):
         assert type(value) in [bool]
         self.oscSender.send('fullscreen', int(value) )
@@ -112,6 +112,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
                     
     boidType = NumericProperty(0)
     def on_boidType(self, instance, value):
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ' ] boidType: ' + str(value)) 
         assert type(value) in [int, float]
         if 0 <= value < len(self.boidDict):
             self.oscSender.send('boidType', int(value))
@@ -135,6 +136,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         
     predatorCount = NumericProperty(0)
     def on_predatorCount(self, instance, value):
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ' ] predatorCount: ' + str(value)) 
         assert type(value) in [int, float]
         if 0 <= value:
             self.oscSender.send('predatorCount', int(value))

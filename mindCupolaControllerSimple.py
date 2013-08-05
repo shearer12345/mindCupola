@@ -335,12 +335,111 @@ class MindCupolaControllerSimple(EventDispatcher):
         if 0 <=  value < len(self.mindCupolaVisualizerGavinController.boidDict):
             #sending boidType as INT
             self.auralizerOscSender.send('boidType', self.mindCupolaVisualizerGavinController.boidDict[value])
-            
-        #do boidType change stuff
-        Clock.unschedule(self.boidTypeTimeOut)
-        Clock.schedule_interval(self.boidTypeTimeOut, 3) #TODO 0.5 choose appropriate boidTypeTimeOut timer value, and add variance
         
-              
+        self.boidTypeTimeoutReschedule()
+        #do boidType change stuff
+        
+    boidTypeTimeOutTimerValue = NumericProperty(5)
+    def on_boidTypeTimeOutTimerValue(self, instance, value):
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ']  boidTypeTimeOutTimerValue changed to ' + str(value) + '. Rescheduling boidTypeTimeout')
+        assert type(value) in [int, float]
+        self.boidTypeTimeoutReschedule()
+    
+    def boidTypeTimeoutReschedule(self):
+        Clock.unschedule(self.boidTypeTimeout)
+        Clock.schedule_interval(self.boidTypeTimeout, self.boidTypeTimeOutTimerValue) #TODO 0.5 choose appropriate boidTypeTimeout timer value, and add variance
+        
+    def boidTypeTimeout(self, dt=None):
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Hit boidTypeTimeout')
+        
+        if self.mindCupolaVisualizerGavinController.state != 5:
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Not in "running" mode. Not attempting to switch boidState.')
+            return #bail if not in running mode
+                
+        boidTypeString = self.mindCupolaVisualizerGavinController.boidDict[self.mindCupolaVisualizerGavinController.boidType]
+        
+        if self.mindCupolaVisualizerGavinController.predatorCount > 0:
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Have predators. Removing.')
+            self.mindCupolaVisualizerGavinController.predatorCount = 0
+            return
+            #TODO 1.3 do more when predators are removed?
+        else:
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] No predators')
+        
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Checking boidType.')
+        if boidTypeString == 'bird':
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] present boidType==' + boidTypeString + '.')
+        
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                self.mindCupolaVisualizerGavinController.predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Aroused.')
+                    self.mindCupolaVisualizerGavinController.boidType = 2 #insect #more dynamic
+                else:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Not aroused.')
+                    self.mindCupolaVisualizerGavinController.boidType = 3 #fish #calmer
+            else:
+                raise 'badOption'
+                exit()
+            
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Ending boidType change.')
+
+        elif boidTypeString == 'amoeba':
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] present boidType==' + boidTypeString + '.')
+            #how do we get here
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Aroused.')
+                    self.mindCupolaVisualizerGavinController.boidType = 3 #fish #more dynamic than amoeba
+                else:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Not aroused. Doing Nothing.')
+                    pass #do nothing. There is no calmer state
+            else:
+                raise 'badOption'
+                exit()
+            
+        elif boidTypeString == 'insect':
+            Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] present boidType==' + boidTypeString + '.')
+            #got here because aroused?
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Aroused.')
+                    predatorCount = 1 #introduce more challenge
+                else:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Not aroused.')
+                    self.mindCupolaVisualizerGavinController.boidType = 0 #birds revert to calmer 
+            else:
+                raise 'badOption'
+                exit()
+
+        elif boidTypeString == 'fish':
+            #got here because aroused?
+            option = choice(['introducePredator', 'changeBoidType'])
+            if option == 'introducePredator':
+                predatorCount = 1
+            elif option == 'changeBoidType':
+                if self.aroused:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Aroused.')
+                    self.mindCupolaVisualizerGavinController.boidType = 2 #insect 
+                else:
+                    Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Not aroused.')
+                    self.mindCupolaVisualizerGavinController.boidType = 0 #birds #more control
+            else:
+                raise 'badOption'
+                exit()
+        else:
+            raise 'bad boidType'
+            exit()
+        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Finished checking boidType.')
+               
     def on_state(self, instance, value):
         assert type(value) in [int, float]
         value = int(value)
@@ -495,76 +594,19 @@ class MindCupolaControllerSimple(EventDispatcher):
             else:
                 Logger.trace(self.__class__.__name__ + ': in [' + whoAmI() + '] Nothing to do.')
                 
+            self.boidTypeTimeoutReschedule()
+                
         else:
             Logger.warning(self.__class__.__name__ + ': in [' + whoAmI() + '] State is ' + str(self.mindCupolaVisualizerGavinController.state))
     
+    retargetBoidsWarning = True
     def retargetBoids(self, dt=None):
-        #TODO 1.1 drive the attractor points around to give random motion
-        Logger.warning(self.__class__.__name__ + ': in [' + whoAmI() + '] Self targetting boids NOT implemented yet')
+        if self.retargetBoidsWarning:
+            self.retargetBoidsWarning = False
+            #TODO 1.1 drive the attractor points around to give random motion
+            Logger.warning(self.__class__.__name__ + ': in [' + whoAmI() + '] Self targetting boids NOT implemented yet')
     
-    def boidTypeTimeOut(self, dt=None):
-        Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Hit boidTypeTimeOut')
-        
-        if self.mindCupolaVisualizerGavinController.state != 5:
-            return #bail if not in running mode
-                
-        boidTypeString = self.mindCupolaVisualizerGavinController.boidDict[self.mindCupolaVisualizerGavinController.boidType]
-        predatorCount = self.mindCupolaVisualizerGavinController.predatorCount
-        
-        if predatorCount > 0:
-            predatorCount = 0
-            #TODO 1 do more when predators are removed?
-            
-        elif boidTypeString == 'bird':
-            option = choice(['introducePredator', 'changeBoidType'])
-            if option == 'introducePredator':
-                predatorCount = 1
-            elif option == 'changeBoidType':
-                if self.aroused:
-                    self.boidType = 2 #insect #more dynamic
-                else:
-                    self.boidType = 3 #fish #calmer
-            else:
-                raise 'badOption'
-
-        elif boidTypeString == 'amoeba':
-            #how do we get here
-            option = choice(['introducePredator', 'changeBoidType'])
-            if option == 'introducePredator':
-                predatorCount = 1
-            elif option == 'changeBoidType':
-                if self.aroused:
-                    self.boidType = 3 #fish #more dynamic than amoeba
-                else:
-                    pass #do nothing. There is no calmer state
-            else:
-                raise 'badOption'
-            
-        elif boidTypeString == 'insect':
-            #got here because aroused?
-            option = choice(['introducePredator', 'changeBoidType'])
-            if option == 'introducePredator':
-                predatorCount = 1
-            elif option == 'changeBoidType':
-                if self.aroused:
-                    predatorCount = 1 #introduce more challenge
-                else:
-                    self.boidType = 0 #birds revert to calmer 
-            else:
-                raise 'badOption'
-
-        elif boidTypeString == 'fish':
-            #got here because aroused?
-            option = choice(['introducePredator', 'changeBoidType'])
-            if option == 'introducePredator':
-                predatorCount = 1
-            elif option == 'changeBoidType':
-                if self.aroused:
-                    self.boidType = 2 #insect 
-                else:
-                    self.boidType = 0 #birds #more control
-            else:
-                raise 'badOption'
+    
         
 #UIX        
 from kivy.uix.boxlayout import BoxLayout
