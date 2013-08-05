@@ -38,6 +38,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
         self.property('debug').dispatch(self)
         self.property('paused').dispatch(self)
         #self.property('fullscreen').dispatch(self)
+        self.property('sixteenByNine').dispatch(self)
         
         self.property('state').dispatch(self)
         
@@ -66,6 +67,11 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
     def on_fullscreen(self, instance, value):
         assert type(value) in [bool]
         self.oscSender.send('fullscreen', int(value) )
+    
+    sixteenByNine = BooleanProperty(True)
+    def on_sixteenByNine(self, instance, value):
+        assert type(value) in [bool]
+        self.oscSender.send('sixteenByNine', int(value) )
     
     paused = BooleanProperty(False)
     def on_paused(self, instance, value):
@@ -273,6 +279,11 @@ class MindCupolaVisualizerGavinControllerMainWidget(BoxLayoutOrientationRelative
         fullscreen_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('fullscreen'))
         self.mindCupolaVisualizerGavinController.bind(fullscreen=fullscreen_widget.setter('active'))
         box.add_widget(fullscreen_widget)
+        
+        sixteenByNine_widget = LabeledSwitch(labelingString='sixteenByNine', active=self.mindCupolaVisualizerGavinController.sixteenByNine)
+        sixteenByNine_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('sixteenByNine'))
+        self.mindCupolaVisualizerGavinController.bind(sixteenByNine=sixteenByNine_widget.setter('active'))
+        box.add_widget(sixteenByNine_widget)
         
         paused_widget = LabeledSwitch(labelingString='Paused', active=self.mindCupolaVisualizerGavinController.paused)
         paused_widget.bind(active=self.mindCupolaVisualizerGavinController.setter('paused'))

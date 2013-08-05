@@ -105,6 +105,10 @@ There are a variety of incoming OSC messages that mcv should handle, detail as f
 
   :i: whether the visualisation should be paused. 0=No, 1=Yes
     
+``/mcv/sixteenByNine i``
+
+  :i: whether the visualisation should be sixteenByNine or not (4by3). 0=No, 1=Yes
+    
 ``/mcv/debug i``
 
   :i: whether the visualisation should dump debug information. 0=No, 1=Yes
