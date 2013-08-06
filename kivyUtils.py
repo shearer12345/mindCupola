@@ -173,7 +173,7 @@ class LabeledButton(BoxLayoutOrientationRelativeToParent):
     buttonWidget = None
     buttonState = OptionProperty('normal', options=('normal', 'down'))
     
-    def __init__(self, labelingString, buttonText, **kwargs): #TODO 6 add initial state to the Button
+    def __init__(self, labelingString, buttonText, buttonState='normal', **kwargs): #TODO DONE 6 add initial state to the Button
         super(LabeledButton, self).__init__(**kwargs)
         
         assert type(labelingString) is str
@@ -199,6 +199,8 @@ class LabeledButton(BoxLayoutOrientationRelativeToParent):
         
         self.add_widget(self.labelingWidget)
         self.add_widget(self.buttonWidget)
+        
+        self.buttonState = buttonState
 
 class LabeledLabel(BoxLayoutOrientationRelativeToParent):
     
