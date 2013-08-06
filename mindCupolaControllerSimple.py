@@ -98,12 +98,10 @@ class MindCupolaControllerSimple(EventDispatcher):
         #TODO ADAM 4 sound effect for entering state "running" - "/mca/interactionState running"
             #in progress by adam
         
-        #TODO 1 visualiser aspect ratio to 16:9- 
+        #TODO DONE 1 visualiser aspect ratio to 16:9- 
         
         #TODO 1.1 message and sound effect for when enter running state - 
 
-        #TODO 1 when/how should boidType be controlled/changed
-        #random initially?? perhaps the AD model influences the chances of moving
         
         
                 
@@ -130,36 +128,33 @@ class MindCupolaControllerSimple(EventDispatcher):
                 #triggered by a random, reset on entry to state
                 #reflecting managing to maintain a steady state. maybe trigger time increases over time
                 
-        #TODO 1.2 when should predators be introduced 
-            #connected to dominance?
+
             
-        #TODO 1.3 when should fan and heaters be used
-        #TODO 1.4 should fan and heaters trigger sound effects? different in each boidType
+        #TODO 2 when should fan and heaters be used
+        #TODO 2 should fan and heaters trigger sound effects? different in each boidType
         
-        #TODO 1.5 when should LED screens be used, what should they do?
+        #TODO 2 when should LED screens be used, what should they do?
           #simple all LEDs on, and all LEDs off.
-          #TODO 1.6 turn on when can't see eyes.
+          #TODO 2 turn on when can't see eyes.
           
           
-        #TODO 2 add pause between runs of eye tracking - move back to waiting for eyes?
+        #TODO 0.5 add pause between runs of eye tracking - move back to waiting for eyes?
         
-        #TODO 2 goodEyesBuildUp Value should ONLY build up when in waitingForEyesState - need a new flag?
+        #TODO 1.1 goodEyesBuildUp Value should ONLY build up when in waitingForEyesState - need a new flag?
                 
         
          
-        #TODO 3 make all boid types except birds more attractive (maybe insects repulsive)
+        #TODO DONE 3 make all boid types except birds more attractive (maybe insects repulsive)
         
-        #TODO 3.2 how should transitions happen etc? (between boids types?)
+        #TODO DONE 4 get MCC running on Alienware - as VM
+        #TODO 2 how control the eye blur??
         
-        #TODO 4 get MCC running on Alienware - as VM
-        #TODO 4 control the eye blur??
-        
-        #TODO 5? in ComputerManagement->Services and Applications->Services. disable/stop desktop window manager session manager service - to stop the Boids game window to every 5 seconds flash up "not responding". probably doens't matter when in xen mode and seems new, so maybe just need to free windows up a little
+        #TODO NO 5? in ComputerManagement->Services and Applications->Services. disable/stop desktop window manager session manager service - to stop the Boids game window to every 5 seconds flash up "not responding". probably doens't matter when in xen mode and seems new, so maybe just need to free windows up a little
         
         
-        #TODO 5 insects run away from the eye?
-        #TODO 5 flock speed - get from mindCupolaVisualizerGavinController? or set as modifier on mindCupolaVisualizerGavinController and send modifier?   
-        #TODO 5 control calibration scale from here/UI, so can deal with different screens/projectors without needing to recompile
+        #TODO NO 9 insects run away from the eye?
+        #TODO 1.1 adjust flock speed according to the arousal level?   
+        #TODO NO 9 control calibration scale from here/UI, so can deal with different screens/projectors without needing to recompile
         
         
         
@@ -232,7 +227,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.calcArousal(instance, value)
 
     arousal = NumericProperty(0)
-    arousalWindow = 300 #TODO 0.6 adjust windowsize? have a short term and a long term?
+    arousalWindow = 300 #TODO DONE 0.6 adjust windowsize? have a short term and a long term?
     
     eyePosLast = [0.0, 0.0]
     eyePosTimeLast = Clock.get_boottime()
@@ -247,7 +242,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.eyePosLast = eyePosNow #update last value
         
         eyePosTimeNow = Clock.get_boottime() #get time now
-        eyePosTimeDiff = eyePosTimeNow - self.eyePosTimeLast #calc difference
+        eyePosTimeDiff = min(eyePosTimeNow - self.eyePosTimeLast, 0.1) #calc difference and cap length
         self.eyePosTimeLast = eyePosTimeNow #update last value
         
         eyePosDiffDistance = abs(sum(eyePosDiff) / len(eyePosDiff)) #calc difference distance
@@ -347,7 +342,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.boidTypeTimeoutReschedule()
         #do boidType change stuff
         
-    boidTypeTimeOutTimerValue = NumericProperty(5)
+    boidTypeTimeOutTimerValue = NumericProperty(30)
     def on_boidTypeTimeOutTimerValue(self, instance, value):
         Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + ']  boidTypeTimeOutTimerValue changed to ' + str(value) + '. Rescheduling boidTypeTimeout')
         assert type(value) in [int, float]
@@ -358,6 +353,10 @@ class MindCupolaControllerSimple(EventDispatcher):
         Clock.schedule_interval(self.boidTypeTimeout, self.boidTypeTimeOutTimerValue) #TODO 0.5 choose appropriate boidTypeTimeout timer value, and add variance
         
     def boidTypeTimeout(self, dt=None):
+        #TODO DONE 1 when/how should boidType be controlled/changed
+        #random initially?? perhaps the AD model influences the chances of moving
+        #TODO DONE1.2 when should predators be introduced 
+        #connected to dominance?
         Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Hit boidTypeTimeout')
         
         if self.mindCupolaVisualizerGavinController.state != 5:
@@ -370,7 +369,7 @@ class MindCupolaControllerSimple(EventDispatcher):
             Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Have predators. Removing.')
             self.mindCupolaVisualizerGavinController.predatorCount = 0
             return
-            #TODO 1.3 do more when predators are removed?
+            #TODO 3 do more when predators are removed?
         else:
             Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] No predators')
         
@@ -744,7 +743,7 @@ if __name__ == "__main__":
     from mindCupolaPythonUtils import get_default_gateway_linux
     Logger.info(__file__ + ': running from __name__')
     
-    #TODO 5 add command line options, according to http://kivy.org/docs/api-kivy.config.html    
+    #TODO 7 don't care much add command line options, according to http://kivy.org/docs/api-kivy.config.html    
     host = '192.168.1.118'#get_default_gateway_linux()
     
     etHost = host

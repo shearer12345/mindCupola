@@ -91,7 +91,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
     ##attractor
 #    attractorPositionX = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
 #    attractorPositionY = BoundedNumericProperty(0.0, min=-2.0, max=2.0)
-    attractorPositionX = NumericProperty(0.0, min=-2.0, max=2.0) #TODO 2 manage values out of range? or 
+    attractorPositionX = NumericProperty(0.0, min=-2.0, max=2.0) #TODO 7 manage values out of range? presently left to MCV to manage, which it does 
     attractorPositionY = NumericProperty(0.0, min=-2.0, max=2.0)
     attractorPosition  = ReferenceListProperty(attractorPositionX, attractorPositionY)
     def on_attractorPosition(self, instance, value):
@@ -151,7 +151,7 @@ class MindCupolaVisualizerGavinController(EventDispatcher):
     pupilsVisible = BooleanProperty(False)
     def on_pupilsVisible(self, instance, value):
         assert type(value) in [bool]
-        #TODO 2 smooth out value and send on threshold changes
+        #TODO 0 smooth out the red effect when pupils not visible
         #should only switch if Off for a while - perhaps move to float and smooth the value, and send only when above a threshold?
         
         self.oscSender.send('pupilsVisible', int(value))
@@ -587,6 +587,7 @@ class MindCupolaVisualizerGavinControllerMainWidget(BoxLayoutOrientationRelative
         self.stateTo1_widget = LabeledSwitch(labelingString='State to 1 - ambient', active=False)
         self.stateTo1_widget.bind(active=self.stateTo1)
         stateBox2.add_widget(self.stateTo1_widget)
+        #TODO 0.6 make boids when not in running mode more blue?
         
         calibrationTarget_widget = LabeledSlider(labelingString='calibrationTarget', value=self.mindCupolaVisualizerGavinController.calibrationTarget, min=0, max=8)
         calibrationTarget_widget.bind(value=self.mindCupolaVisualizerGavinController.setter('calibrationTarget'))
