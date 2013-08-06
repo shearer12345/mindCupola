@@ -94,6 +94,9 @@ class MindCupolaControllerSimple(EventDispatcher):
         self.mindCupolaVisualizerGavinController.bind(attractorPosition=self.on_attractorPosition)
         #self.mindCupolaVisualizerGavinController.bind(attractorPositionX=self.on_attractorPosition)
         self.boidStateSet('bird')
+
+        #force dispatch of boidType        
+        self.mindCupolaVisualizerGavinController.property('boidType').dispatch(self.mindCupolaVisualizerGavinController)
         
         #TODO ADAM 4 sound effect for entering state "running" - "/mca/interactionState running"
             #in progress by adam
@@ -377,7 +380,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         if boidTypeString == 'bird':
             Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] present boidType==' + boidTypeString + '.')
         
-            option = choice(['introducePredator', 'changeBoidType'])
+            option = choice(['introducePredator', 'changeBoidType', 'changeBoidType']) #use to adjust options and their probablities
             if option == 'introducePredator':
                 self.mindCupolaVisualizerGavinController.predatorCount = 1
             elif option == 'changeBoidType':
@@ -463,6 +466,7 @@ class MindCupolaControllerSimple(EventDispatcher):
         
     def on_fixation(self, instance, value):
         if instance.fixationValid:
+            #Logger.debug(self.__class__.__name__ + ': in [' + whoAmI() + '] Got fixation.')
             
             #scale from [0,1] to [-1,1]
             #TODO something is weird with this mapping, boids are moving always to upper right
