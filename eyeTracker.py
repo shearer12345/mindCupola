@@ -548,7 +548,7 @@ class EyeTracker(EventDispatcher):
         #TODO DONE 1.2 on timer run out make goodEyes = true
         
     goodCalibration = BooleanProperty(False)
-    goodCalibrationThreshold = BoundedNumericProperty(11, min=4, max=11) #TODO 4.5 figure out appropriate bounds
+    goodCalibrationThreshold = BoundedNumericProperty(11, min=4, max=11) #TODO DONE 4.5 figure out appropriate bounds
     def on_goodCalibration(self, instance, value):
         if value:
             pass
